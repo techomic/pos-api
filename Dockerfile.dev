@@ -1,0 +1,8 @@
+FROM php:8.3.2-fpm
+
+# Assume that the composer install command is run locally before running the container.
+
+WORKDIR /var/www
+
+COPY . .
+

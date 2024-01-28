@@ -1,0 +1,19 @@
+version: '3.0'
+
+services:
+  vikuraa-php:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./public:/var/www/html
+      - .:/var/www
+
+  vikuraa-nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "9000:80"
+    volumes:
+      - ./nginx-dev.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - vikuraa-php
