@@ -21,8 +21,14 @@ class RoundingMode
         $this->container = $container;
     }
 
+    public static function factory(Container $container)
+    {
+        return new self($container);
+    }
+    
     public static function getRoundingModes()
     {
-        
+        $instance = self::factory();
+        $langLines = $instance->container->get('language');
     }
 }
