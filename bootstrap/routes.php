@@ -1,5 +1,6 @@
 <?php
 
+use Vikuraa\Modules\Test\TestController;
 /**
  * This is the main routes file for the application.
  * 
@@ -11,3 +12,9 @@ $route->get('/', function($request, $response) {
 
     return $response;
 });
+
+/**
+ * Testing
+ */
+$route->get('/rounding-options', TestController::class . ':testRoundingOptions');
+$route->get('/rounding-code-name', TestController::class . ':testGetRoundingCodeName');
