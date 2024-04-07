@@ -18,7 +18,7 @@ try {
 }
 
 // Create the container before creating the $app instance.
-$containerBuild = new ContainerBuilder();
+$containerBuilder = new ContainerBuilder();
 
 // inject the settings into the DI container.
 $settings = require __DIR__ . '/settings.php';
