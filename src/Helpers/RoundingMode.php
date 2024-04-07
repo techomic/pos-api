@@ -1,6 +1,6 @@
 <?php
 
-namespace Techomic\Helpers;
+namespace Vikuraa\Helpers;
 
 use DI\Container;
 
@@ -20,15 +20,29 @@ class RoundingMode
     {
         $this->container = $container;
     }
-
-    public static function factory(Container $container)
-    {
-        return new self($container);
-    }
     
-    public static function getRoundingModes()
+    public function getRoundingOptions()
     {
-        $instance = self::factory();
-        $langLines = $instance->container->get('language');
+        $langLines = $this->container->get('language');
+        $result = [];
+        
+        $class = new \ReflectionClass(__CLASS__);
+        
+        foreach ($class->getConstants() as $key => $value) {
+            $result[$value] = $langLines[strtolower('ENUM_' . $key)];
+        }
+
+        return $result;
+    }
+
+    public function getRoundingCodeName($code)
+    {
+        $langLines = $this->container->get('language');
+        
+        if (empty($code)) {
+            return $langLines['common_unknown'];
+        }
+
+        return $this->getRoundingOptions()[$code];
     }
 }

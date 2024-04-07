@@ -3,13 +3,7 @@
 use DI\ContainerBuilder;
 // use Monolog\Logger;
 use Psr\Container\ContainerInterface;
-// use Psr\Log\LoggerInterface;
-// use App\Helpers\Cache;
-// use Predis\Client;
-// use Aws\S3\S3Client;
-// use App\Helpers\DB;
-// use App\Helpers\PostgresLogHandler;
-// use Monolog\Handler\StreamHandler;
+use Vikuraa\Helpers\RoundingMode;
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
@@ -37,11 +31,27 @@ return function (ContainerBuilder $containerBuilder) {
         // },
         
         'language' => function (ContainerInterface $c) {
-            $appLanguage = $settings = $c->get('settings')['language'];
+            $appLanguage = $c->get('settings')['app']['language'];
             foreach (glob(__DIR__ . "/../src/Language/{$appLanguage}/*.php") as $language) {
                 include $language;
             }
             return $lang;
-        }
+        },
+
+        'helpers' => [
+            'RoundingMode' => [
+                'getRoundingOptions' => function (ContainerInterface $c) {
+                    $roundingModes = new RoundingMode($c);
+                    return $roundingModes->getRoundingOptions();
+                },
+
+                'getRoundingCodeName' => function (ContainerInterface $c) {
+                    return function ($code) use ($c) {
+                        $roundingModes = new RoundingMode($c);
+                        return $roundingModes->getRoundingCodeName($code);
+                    };
+                },
+            ]
+        ],
     ]);
 };
