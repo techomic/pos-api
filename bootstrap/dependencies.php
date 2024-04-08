@@ -51,6 +51,13 @@ return function (ContainerBuilder $containerBuilder) {
                         return $roundingModes->getRoundingCodeName($code);
                     };
                 },
+
+                'roundNumber' => function (ContainerInterface $c) {
+                    return function ($roundingMode, $amount, $decimals) use ($c) {
+                        $roundingModes = new RoundingMode($c);
+                        return $roundingModes->roundNumber($roundingMode, $amount, $decimals);
+                    };
+                },
             ]
         ],
     ]);

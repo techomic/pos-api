@@ -27,4 +27,14 @@ class TestController extends Controller
             'data' => $roundingModes,
         ]);
     }
+
+    public function testRoundNumber(Request $request, Response $response)
+    {
+        $rounded = $this->container->get('helpers')['RoundingMode']['roundNumber'](6, 10.5, 3);
+        return $response->withJson([
+            'code' => 200,
+            'message' => 'Success',
+            'data' => $rounded,
+        ]);
+    }
 }

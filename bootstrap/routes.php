@@ -18,3 +18,4 @@ $route->get('/', function($request, $response) {
  */
 $route->get('/rounding-options', TestController::class . ':testRoundingOptions');
 $route->get('/rounding-code-name', TestController::class . ':testGetRoundingCodeName');
+$route->get('/rounding-round-number', TestController::class . ':testRoundNumber');
