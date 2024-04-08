@@ -5,6 +5,7 @@ use DI\ContainerBuilder;
 use Psr\Container\ContainerInterface;
 use Vikuraa\Helpers\RoundingMode;
 use Vikuraa\Helpers\DomPdfCreator;
+use Vikuraa\Helpers\Common;
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
@@ -38,7 +39,11 @@ return function (ContainerBuilder $containerBuilder) {
             }
             return $lang;
         },
-      
+        
+        Common::class => function (ContainerInterface $c) {
+            return new Common($c);
+        },
+
         RoundingMode::class => function (ContainerInterface $c) {
             return new RoundingMode($c);
         },

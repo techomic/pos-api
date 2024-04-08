@@ -45,4 +45,14 @@ class TestController extends Controller
         $fileName = 'test';
         $pdf = $this->container->get(DomPdfCreator::class)->createPdf($html, $fileName);
     }
+
+    public function testUri(Request $request, Response $response)
+    {
+        $uri = $this->container->get('request')->getUri();
+        return $response->withJson([
+            'code' => 200,
+            'message' => 'Success',
+            'data' => $uri,
+        ]);
+    }
 }
