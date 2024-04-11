@@ -8,10 +8,13 @@ return function (ContainerBuilder $containerBuilder) {
         'settings' => [
             'app' => [
                 'name' => getenv('APP_NAME'),
+                'domain' => getenv('DOMAIN'),
                 'language' => getenv('APP_LANG'),
                 'charset' => getenv('CHARSET') ?? 'UTF-8',
             ],
             'security' => [
+                'enc_key' => getenv('ENC_KEY'),
+                'jwt_key' => getenv('JWT_KEY'),
                 'csrf_protection' => boolval(getenv('CSRF_PROTECTION')),
                 'csrf_expire' => getenv('CSRF_EXPIRE') ?? 7200, // 2 hours
                 'csrf_token_name' => getenv('CSRF_TOKEN_NAME') ?? 'vikuara_csrf_token',
@@ -23,31 +26,15 @@ return function (ContainerBuilder $containerBuilder) {
                 'cookie_domain' => getenv('COOKIE_DOMAIN') ?? null,
                 'cookie_httponly' => boolval(getenv('COOKIE_HTTPONLY')),
             ],
-            // 'db' => [
-            //     'host'      =>  getenv('DB_HOST'),
-            //     'port'      =>  getenv('DB_PORT'),
-            //     'name'      =>  getenv('DB_DATABASE'),
-            //     'service'   =>  getenv('DB_SERVICE'),
-            //     'username'  =>  getenv('DB_USERNAME'),
-            //     'password'  =>  getenv('DB_PASSWORD'),
-            //     'charset'   =>  getenv('DB_CHARSET'),
-            //     'mode'      =>  getenv('DB_MODE'),
-            //     'username_omega' => getenv('DB_USERNAME_OMEGA'),
-            //     'password_omega' => getenv('DB_PASSWORD_OMEGA'),
-            // ],
-            
-            // 'redis' => [
-            //     'scheme'    =>  getenv('REDIS_SCHEME', 'tcp'),
-            //     'host'      =>  getenv('REDIS_HOST'),
-            //     'port'      =>  getenv('REDIS_PORT'),
-            //     'password'  =>  getenv('REDIS_PASSWORD'),
-            // ],
-            // 'aws' => [
-            //     'version'                   => getenv('AWS_CLIENT_VERSION'),
-            //     'region'                    => getenv('AWS_CLIENT_REGION'),
-            //     'endpoint'                  => getenv('AWS_ENDPOINT'),
-            //     'use_path_style_endpoint'   => getenv('AWS_USE_PATH_STYLE_ENDPOINT')
-            // ],
+            'db' => [
+                'host'      =>  getenv('DB_HOST') ?? 'localhost',
+                'port'      =>  getenv('DB_PORT') ?? 5432,
+                'sslmode'   =>  getenv('DB_SSLMODE') ?? 'disable', // 'prefer' or 'require
+                'name'      =>  getenv('DB_NAME') ?? 'vikuraa',
+                'username'  =>  getenv('DB_USER') ?? 'postgres',
+                'password'  =>  getenv('DB_PASSWORD') ?? '',
+                'table_prefix' => getenv('DB_TABLE_PREFIX') ?? 'vikuraa_',
+            ],
         ],
     ]);
 };

@@ -55,4 +55,13 @@ class TestController extends Controller
             'data' => $uri,
         ]);
     }
+
+    public function generateRandomBytes(Request $request, Response $response, $args)
+    {
+        return $response->withJson([
+            'code' => 200,
+            'message' => 'Success',
+            'data' => base64_encode(random_bytes($args['length'])),
+        ]);
+    }
 }

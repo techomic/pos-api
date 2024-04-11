@@ -7,6 +7,7 @@ use Vikuraa\Helpers\RoundingMode;
 use Vikuraa\Helpers\DomPdfCreator;
 use Vikuraa\Helpers\Common;
 use Vikuraa\Helpers\Security;
+use Vikuraa\Helpers\Jwt;
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
@@ -47,6 +48,10 @@ return function (ContainerBuilder $containerBuilder) {
 
         Security::class => function (ContainerInterface $c) {
             return new Security($c);
+        },
+
+        Jwt::class => function (ContainerInterface $c) {
+            return new Jwt($c);
         },
 
         RoundingMode::class => function (ContainerInterface $c) {
