@@ -5,15 +5,29 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
+    container_name: vikuraa-php
     volumes:
       - ./public:/var/www/html
       - .:/var/www
 
   vikuraa-nginx:
     image: nginx:stable-alpine
+    container_name: vikuraa-nginx
     ports:
       - "9002:80"
     volumes:
       - ./nginx-dev.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - vikuraa-php
+
+  vikuraa-postgres:
+    image: postgres:16.2
+    container_name: vikuraa-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: vikuraa
+    volumes:
+      - ./db/data:/var/lib/postgresql/data

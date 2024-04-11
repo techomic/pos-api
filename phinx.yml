@@ -15,12 +15,12 @@ environments:
         charset: utf8
 
     development:
-        adapter: mysql
-        host: localhost
-        name: development_db
-        user: root
-        pass: ''
-        port: 3306
+        adapter: pgsql
+        host: vikuraa-postgres
+        name: vikuraa
+        user: postgres
+        pass: somecrypticpass
+        port: 5432
         charset: utf8
 
     testing:
