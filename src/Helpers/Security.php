@@ -297,8 +297,9 @@ class Security
 			return $str;
 		}
 
+		$commonHelper = $this->container->get(Common::class);
 		// Remove Invisible Characters
-		$str = remove_invisible_characters($str);
+		$str = $commonHelper->removeInvisibleCharacters($str);
 
 		/*
 		 * URL Decode
@@ -309,13 +310,11 @@ class Security
 		 *
 		 * Note: Use rawurldecode() so it does not remove plus signs
 		 */
-		if (stripos($str, '%') !== false)
-		{
-			do
-			{
+		if (stripos($str, '%') !== false) {
+			do {
 				$oldstr = $str;
 				$str = rawurldecode($str);
-				$str = preg_replace_callback('#%(?:\s*[0-9a-f]){2,}#i', array($this, '_urldecodespaces'), $str);
+				$str = preg_replace_callback('#%(?:\s*[0-9a-f]){2,}#i', [$this, 'urldecodespaces'], $str);
 			}
 			while ($oldstr !== $str);
 			unset($oldstr);
@@ -332,7 +331,7 @@ class Security
 		$str = preg_replace_callback('/<\w+.*/si', array($this, '_decode_entity'), $str);
 
 		// Remove Invisible Characters Again!
-		$str = remove_invisible_characters($str);
+		$str = $commonHelper->removeInvisibleCharacters($str);
 
 		/*
 		 * Convert all tabs to spaces
@@ -345,7 +344,7 @@ class Security
 		$str = str_replace("\t", ' ', $str);
 
 		// Capture converted string for later comparison
-		$converted_string = $str;
+		$convertedString = $str;
 
 		// Remove Strings that are never allowed
 		$str = $this->_do_never_allowed($str);
@@ -359,15 +358,12 @@ class Security
 		 *
 		 * But it doesn't seem to pose a problem.
 		 */
-		if ($is_image === TRUE)
-		{
+		if ($isImage === TRUE) {
 			// Images have a tendency to have the PHP short opening and
 			// closing tags every so often so we skip those and only
 			// do the long opening tags.
 			$str = preg_replace('/<\?(php)/i', '&lt;?\\1', $str);
-		}
-		else
-		{
+		} else {
 			$str = str_replace(array('<?', '?'.'>'), array('&lt;?', '?&gt;'), $str);
 		}
 
@@ -377,19 +373,18 @@ class Security
 		 * This corrects words like:  j a v a s c r i p t
 		 * These words are compacted back to their correct state.
 		 */
-		$words = array(
+		$words = [
 			'javascript', 'expression', 'vbscript', 'jscript', 'wscript',
 			'vbs', 'script', 'base64', 'applet', 'alert', 'document',
 			'write', 'cookie', 'window', 'confirm', 'prompt', 'eval'
-		);
+		];
 
-		foreach ($words as $word)
-		{
+		foreach ($words as $word) {
 			$word = implode('\s*', str_split($word)).'\s*';
 
 			// We only want to do this when it is followed by a non-word character
 			// That way valid stuff like "dealer to" does not become "dealerto"
-			$str = preg_replace_callback('#('.substr($word, 0, -3).')(\W)#is', array($this, '_compact_exploded_words'), $str);
+			$str = preg_replace_callback('#('.substr($word, 0, -3).')(\W)#is', [$this, 'compactExplodedWords'], $str);
 		}
 
 		/*
@@ -404,22 +399,18 @@ class Security
 		 * ... however, remove_invisible_characters() above already strips the
 		 * hex-encoded ones, so we'll skip them below.
 		 */
-		do
-		{
+		do {
 			$original = $str;
 
-			if (preg_match('/<a/i', $str))
-			{
-				$str = preg_replace_callback('#<a(?:rea)?[^a-z0-9>]+([^>]*?)(?:>|$)#si', array($this, '_js_link_removal'), $str);
+			if (preg_match('/<a/i', $str)) {
+				$str = preg_replace_callback('#<a(?:rea)?[^a-z0-9>]+([^>]*?)(?:>|$)#si', [$this, '_js_link_removal'], $str);
 			}
 
-			if (preg_match('/<img/i', $str))
-			{
-				$str = preg_replace_callback('#<img[^a-z0-9]+([^>]*?)(?:\s?/?>|$)#si', array($this, '_js_img_removal'), $str);
+			if (preg_match('/<img/i', $str)) {
+				$str = preg_replace_callback('#<img[^a-z0-9]+([^>]*?)(?:\s?/?>|$)#si', [$this, '_js_img_removal'], $str);
 			}
 
-			if (preg_match('/script|xss/i', $str))
-			{
+			if (preg_match('/script|xss/i', $str)) {
 				$str = preg_replace('#</*(?:script|xss).*?>#si', '[removed]', $str);
 			}
 		}
@@ -451,13 +442,12 @@ class Security
 		// Note: It would be nice to optimize this for speed, BUT
 		//       only matching the naughty elements here results in
 		//       false positives and in turn - vulnerabilities!
-		do
-		{
-			$old_str = $str;
-			$str = preg_replace_callback($pattern, array($this, '_sanitize_naughty_html'), $str);
+		do {
+			$oldStr = $str;
+			$str = preg_replace_callback($pattern, [$this, '_sanitize_naughty_html'], $str);
 		}
-		while ($old_str !== $str);
-		unset($old_str);
+		while ($oldStr !== $str);
+		unset($oldStr);
 
 		/*
 		 * Sanitize naughty scripting elements
@@ -499,9 +489,9 @@ class Security
 		 * string post-removal of XSS, then it fails, as there was unwanted XSS
 		 * code found and removed/changed during processing.
 		 */
-		if ($is_image === TRUE)
+		if ($isImage === TRUE)
 		{
-			return ($str === $converted_string);
+			return ($str === $convertedString);
 		}
 
 		return $str;
@@ -515,17 +505,16 @@ class Security
 	 * @see		CI_Security::$_xss_hash
 	 * @return	string	XSS hash
 	 */
-	public function xss_hash()
+	public function xssHash()
 	{
-		if ($this->_xss_hash === NULL)
-		{
-			$rand = $this->get_random_bytes(16);
-			$this->_xss_hash = ($rand === FALSE)
+		if ($this->xssHash === NULL) {
+			$rand = $this->getRandomBytes(16);
+			$this->xssHash = ($rand === FALSE)
 				? md5(uniqid(mt_rand(), TRUE))
 				: bin2hex($rand);
 		}
 
-		return $this->_xss_hash;
+		return $this->xssHash;
 	}
 
 	/**
@@ -534,54 +523,9 @@ class Security
 	 * @param	int	$length	Output length
 	 * @return	string
 	 */
-	public function get_random_bytes($length)
+	public function getRandomBytes($length)
 	{
-		if (empty($length) OR ! ctype_digit((string) $length))
-		{
-			return FALSE;
-		}
-
-		if (function_exists('random_bytes'))
-		{
-			try
-			{
-				// The cast is required to avoid TypeError
-				return random_bytes((int) $length);
-			}
-			catch (Exception $e)
-			{
-				// If random_bytes() can't do the job, we can't either ...
-				// There's no point in using fallbacks.
-				log_message('error', $e->getMessage());
-				return FALSE;
-			}
-		}
-
-		// Unfortunately, none of the following PRNGs is guaranteed to exist ...
-		if (defined('MCRYPT_DEV_URANDOM') && ($output = mcrypt_create_iv($length, MCRYPT_DEV_URANDOM)) !== FALSE)
-		{
-			return $output;
-		}
-
-
-		if (is_readable('/dev/urandom') && ($fp = fopen('/dev/urandom', 'rb')) !== FALSE)
-		{
-			// Try not to waste entropy ...
-			is_php('5.4') && stream_set_chunk_size($fp, $length);
-			$output = fread($fp, $length);
-			fclose($fp);
-			if ($output !== FALSE)
-			{
-				return $output;
-			}
-		}
-
-		if (function_exists('openssl_random_pseudo_bytes'))
-		{
-			return openssl_random_pseudo_bytes($length);
-		}
-
-		return FALSE;
+		return random_bytes((int) $length);
 	}
 
 	/**
@@ -601,49 +545,30 @@ class Security
 	 * @param	string	$charset	Character set
 	 * @return	string
 	 */
-	public function entity_decode($str, $charset = NULL)
+	public function entityDecode($str, $charset = NULL)
 	{
 		if (strpos($str, '&') === FALSE)
 		{
 			return $str;
 		}
 
-		static $_entities;
+
 
 		isset($charset) OR $charset = $this->charset;
-		$flag = is_php('5.4')
-			? ENT_COMPAT | ENT_HTML5
-			: ENT_COMPAT;
+		
+		$entities = array_map('strtolower', get_html_translation_table(HTML_ENTITIES, ENT_HTML5, $charset));
 
-		if ( ! isset($_entities))
-		{
-			$_entities = array_map('strtolower', get_html_translation_table(HTML_ENTITIES, $flag, $charset));
 
-			// If we're not on PHP 5.4+, add the possibly dangerous HTML 5
-			// entities to the array manually
-			if ($flag === ENT_COMPAT)
-			{
-				$_entities[':'] = '&colon;';
-				$_entities['('] = '&lpar;';
-				$_entities[')'] = '&rpar;';
-				$_entities["\n"] = '&NewLine;';
-				$_entities["\t"] = '&Tab;';
-			}
-		}
 
-		do
-		{
-			$str_compare = $str;
+		do {
+			$strCompare = $str;
 
 			// Decode standard entities, avoiding false positives
-			if (preg_match_all('/&[a-z]{2,}(?![a-z;])/i', $str, $matches))
-			{
+			if (preg_match_all('/&[a-z]{2,}(?![a-z;])/i', $str, $matches)) {
 				$replace = array();
 				$matches = array_unique(array_map('strtolower', $matches[0]));
-				foreach ($matches as &$match)
-				{
-					if (($char = array_search($match.';', $_entities, TRUE)) !== FALSE)
-					{
+				foreach ($matches as &$match) {
+					if (($char = array_search($match.';', $entities, TRUE)) !== FALSE) {
 						$replace[$match] = $char;
 					}
 				}
@@ -654,16 +579,12 @@ class Security
 			// Decode numeric & UTF16 two byte entities
 			$str = html_entity_decode(
 				preg_replace('/(&#(?:x0*[0-9a-f]{2,5}(?![0-9a-f;])|(?:0*\d{2,4}(?![0-9;]))))/iS', '$1;', $str),
-				$flag,
+				ENT_HTML5,
 				$charset
 			);
 
-			if ($flag === ENT_COMPAT)
-			{
-				$str = str_replace(array_values($_entities), array_keys($_entities), $str);
-			}
 		}
-		while ($str_compare !== $str);
+		while ($strCompare !== $str);
 		return $str;
 	}
 
@@ -676,7 +597,7 @@ class Security
 	 */
 	public function sanitize_filename($str, $relative_path = FALSE)
 	{
-		$bad = $this->filename_bad_chars;
+		$bad = $this->fileNameBadChars;
 
 		if ( ! $relative_path)
 		{
@@ -684,10 +605,10 @@ class Security
 			$bad[] = '/';
 		}
 
-		$str = remove_invisible_characters($str, FALSE);
+		$commonHelper = $this->container->get(Common::class);
+		$str = $commonHelper->removeInvisibleCharacters($str, FALSE);
 
-		do
-		{
+		do {
 			$old = $str;
 			$str = str_replace($bad, '', $str);
 		}
@@ -696,27 +617,23 @@ class Security
 		return stripslashes($str);
 	}
 
-	// ----------------------------------------------------------------
-
-	/**
-	 * Strip Image Tags
-	 *
-	 * @param	string	$str
-	 * @return	string
-	 */
-	public function strip_image_tags($str)
-	{
-		return preg_replace(
-			array(
-				'#<img[\s/]+.*?src\s*=\s*(["\'])([^\\1]+?)\\1.*?\>#i',
-				'#<img[\s/]+.*?src\s*=\s*?(([^\s"\'=<>`]+)).*?\>#i'
-			),
-			'\\2',
-			$str
-		);
-	}
-
-	// ----------------------------------------------------------------
+	// /**
+	//  * Strip Image Tags
+	//  *
+	//  * @param	string	$str
+	//  * @return	string
+	//  */
+	// public function strip_image_tags($str)
+	// {
+	// 	return preg_replace(
+	// 		array(
+	// 			'#<img[\s/]+.*?src\s*=\s*(["\'])([^\\1]+?)\\1.*?\>#i',
+	// 			'#<img[\s/]+.*?src\s*=\s*?(([^\s"\'=<>`]+)).*?\>#i'
+	// 		),
+	// 		'\\2',
+	// 		$str
+	// 	);
+	// }
 
 	/**
 	 * URL-decode taking spaces into account
@@ -725,7 +642,7 @@ class Security
 	 * @param	array	$matches
 	 * @return	string
 	 */
-	protected function _urldecodespaces($matches)
+	protected function urldecodespaces($matches)
 	{
 		$input    = $matches[0];
 		$nospaces = preg_replace('#\s+#', '', $input);
@@ -746,7 +663,7 @@ class Security
 	 * @param	array	$matches
 	 * @return	string
 	 */
-	protected function _compact_exploded_words($matches)
+	protected function compactExplodedWords($matches)
 	{
 		return preg_replace('/\s+/s', '', $matches[1]).$matches[2];
 	}
