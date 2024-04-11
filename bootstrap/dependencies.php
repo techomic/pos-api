@@ -6,6 +6,7 @@ use Psr\Container\ContainerInterface;
 use Vikuraa\Helpers\RoundingMode;
 use Vikuraa\Helpers\DomPdfCreator;
 use Vikuraa\Helpers\Common;
+use Vikuraa\Helpers\Security;
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
@@ -42,6 +43,10 @@ return function (ContainerBuilder $containerBuilder) {
         
         Common::class => function (ContainerInterface $c) {
             return new Common($c);
+        },
+
+        Security::class => function (ContainerInterface $c) {
+            return new Security($c);
         },
 
         RoundingMode::class => function (ContainerInterface $c) {

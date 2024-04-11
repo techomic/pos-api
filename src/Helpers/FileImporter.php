@@ -54,5 +54,49 @@ class FileImporter
         // We may want to rework the CSV import feature to read the file in chunks, process it and continue.
         // It must be done in a way that does not significantly negatively affect performance.
         
+        ini_set('auto_detect_line_endings', true);
+
+        $csvRows = false;
+
+        if (($csvFile = fopen($fileName,'r')) !== false) {
+
+            $csvRows = [];
+
+            //Skip Byte-Order Mark
+            if ($this->bomExists($csvFile) === true) {
+                fseek($csvFile, 3);
+            }
+
+            $headers = fgetcsv($csvFile);
+
+            $security = $this->container->get(Security::class);
+
+            while (($row = fgetcsv($csvFile)) !== false) {
+                //Skip empty lines
+                if ($row !== array(null)) {
+                    $csv_rows[] = array_combine($headers, $security->xssClean($row));
+                }
+            }
+
+            fclose($csvFile);
+        }
+
+        return $csvRows;
+    }
+
+    public function bomExists(&$fileHandle)
+    {
+        $result = false;
+        $candidate = fread($fileHandle, 3);
+
+        rewind($fileHandle);
+
+        $bom = pack('CCC', 0xef, 0xbb, 0xbf);
+
+        if (0 === strncmp($candidate, $bom, 3)) {
+            $result = TRUE;
+        }
+
+        return $result;
     }
 }

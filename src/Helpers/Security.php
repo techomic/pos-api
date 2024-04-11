@@ -286,7 +286,7 @@ class Security
 	 * @param 	bool		$is_image	Whether the input is an image
 	 * @return	string
 	 */
-	public function xssClean($str, $isImage = FALSE)
+	public function xssClean($str, $isImage = false)
 	{
 		// Is the string an array?
 		if (is_array($str)) {
