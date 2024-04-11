@@ -17,6 +17,9 @@ try {
     // TODO: Need to log the error here
 }
 
+// Load the constants
+require __DIR__ . '/constants.php';
+
 // Create the container before creating the $app instance.
 $containerBuilder = new ContainerBuilder();
 

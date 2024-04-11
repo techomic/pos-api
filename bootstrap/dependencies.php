@@ -4,6 +4,10 @@ use DI\ContainerBuilder;
 // use Monolog\Logger;
 use Psr\Container\ContainerInterface;
 use Vikuraa\Helpers\RoundingMode;
+use Vikuraa\Helpers\DomPdfCreator;
+use Vikuraa\Helpers\Common;
+use Vikuraa\Helpers\Security;
+use Vikuraa\Helpers\Jwt;
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
@@ -37,21 +41,25 @@ return function (ContainerBuilder $containerBuilder) {
             }
             return $lang;
         },
+        
+        Common::class => function (ContainerInterface $c) {
+            return new Common($c);
+        },
 
-        'helpers' => [
-            'RoundingMode' => [
-                'getRoundingOptions' => function (ContainerInterface $c) {
-                    $roundingModes = new RoundingMode($c);
-                    return $roundingModes->getRoundingOptions();
-                },
+        Security::class => function (ContainerInterface $c) {
+            return new Security($c);
+        },
 
-                'getRoundingCodeName' => function (ContainerInterface $c) {
-                    return function ($code) use ($c) {
-                        $roundingModes = new RoundingMode($c);
-                        return $roundingModes->getRoundingCodeName($code);
-                    };
-                },
-            ]
-        ],
+        Jwt::class => function (ContainerInterface $c) {
+            return new Jwt($c);
+        },
+
+        RoundingMode::class => function (ContainerInterface $c) {
+            return new RoundingMode($c);
+        },
+
+        DomPdfCreator::class => function (ContainerInterface $c) {
+            return new DomPdfCreator($c);
+        },
     ]);
 };

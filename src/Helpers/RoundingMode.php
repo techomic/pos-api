@@ -45,4 +45,23 @@ class RoundingMode
 
         return $this->getRoundingOptions()[$code];
     }
+
+    public function roundNumber($roundingMode, $amount, $decimals)
+    {
+        if ($roundingMode == self::ROUND_UP) {
+            $fig = pow(10, $decimals);
+            $roundedTotal = (ceil($fig * $amount) + ceil($fig * $amount - ceil($fig * $amount))) / $fig;
+            return $roundedTotal;
+        } elseif ($roundingMode == self::ROUND_DOWN) {
+            $fig = pow(10, $decimals);
+			$roundedTotal = (floor($fig * $amount) + floor($fig * $amount - floor($fig * $amount))) / $fig;
+            return $roundedTotal;
+        } elseif ($roundingMode == self::HALF_FIVE) {
+            $roundedTotal = round($amount / 5, $decimals, self::HALF_EVEN) * 5;
+            return $roundedTotal;
+        } else {
+            $roundedTotal = round($amount, $decimals, $roundingMode);
+            return $roundedTotal;
+        }
+    }
 }
