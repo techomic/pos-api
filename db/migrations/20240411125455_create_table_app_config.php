@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Phinx\Migration\AbstractMigration;
 
-require_once __DIR__ . '/MigrationTrait.php';
+require_once __DIR__ . '/../MigrationTrait.php';
 
 final class CreateTableAppConfig extends AbstractMigration
 {
