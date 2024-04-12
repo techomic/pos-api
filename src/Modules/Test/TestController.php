@@ -7,6 +7,8 @@ use Slim\Http\Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Vikuraa\Helpers\RoundingMode;
 use Vikuraa\Helpers\DomPdfCreator;
+use Vikuraa\Helpers\EncryptionInterface;
+
 class TestController extends Controller
 {
     public function testRoundingOptions(Request $request, Response $response)
@@ -62,6 +64,30 @@ class TestController extends Controller
             'code' => 200,
             'message' => 'Success',
             'data' => base64_encode(random_bytes($args['length'])),
+        ]);
+    }
+
+    public function testEncryption(Request $request, Response $response, array $args)
+    {
+        $encryption = $this->container->get(EncryptionInterface::class);
+        $encrypted = $encryption->encrypt($args['string']);
+        $decrypted = $encryption->decrypt($encrypted);
+        return $response->withJson([
+            'code' => 200,
+            'message' => 'Success',
+            'data' =>  ['encrypted' => $encrypted, 'decrypted' => $decrypted],
+        ]);
+    }
+
+    public function testHashing(Request $request, Response $response)
+    {
+        $encryption = $this->container->get(EncryptionInterface::class);
+        $hash = $encryption->hash('password');
+        $verify = $encryption->verify('password', $hash);
+        return $response->withJson([
+            'code' => 200,
+            'message' => 'Success',
+            'data' => ['hash' => $hash, 'verify' => $verify],
         ]);
     }
 }

@@ -3,7 +3,7 @@
 use Dotenv\Dotenv;
 use Dotenv\Exception\InvalidPathException;
 
-require __DIR__ . '/../../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 
 
@@ -15,12 +15,12 @@ trait MigrationTrait
     public function init()
     {
         try {
-            Dotenv::createUnsafeImmutable(__DIR__ . '/../../')->load();
+            Dotenv::createUnsafeImmutable(__DIR__ . '/../')->load();
         } catch (InvalidPathException $e) {
             // TODO: Need to log the error here
         }
 
-        $this->tablePrefix = getenv('DB_TABLE_PREFIX') ?? 'vikuraa';
+        $this->tablePrefix = getenv('DB_TABLE_PREFIX') ?? 'vikuraa_';
         $this->dbName = getenv('DB_NAME') ?? 'vikuraa';
     }
 }

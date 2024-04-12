@@ -14,6 +14,7 @@ return function (ContainerBuilder $containerBuilder) {
             ],
             'security' => [
                 'enc_key' => getenv('ENC_KEY'),
+                'enc_iv' => getenv('ENC_IV'),
                 'jwt_key' => getenv('JWT_KEY'),
                 'csrf_protection' => boolval(getenv('CSRF_PROTECTION')),
                 'csrf_expire' => getenv('CSRF_EXPIRE') ?? 7200, // 2 hours

@@ -7,6 +7,7 @@ use Dotenv\Dotenv;
 use Dotenv\Exception\InvalidPathException;
 use DI\ContainerBuilder;
 use Slim\Routing\RouteCollectorProxy;
+use Vikuraa\Middlewares\JwtMiddleware;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -43,4 +44,5 @@ $app = AppFactory::create();
 // Register all the routes.
 $app->group('', function (RouteCollectorProxy $route) {
     include __DIR__ . '/routes.php';
-});
+})
+->add(new JwtMiddleware($container));

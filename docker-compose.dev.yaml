@@ -11,7 +11,7 @@ services:
       - .:/var/www
 
   vikuraa-nginx:
-    image: nginx:stable-alpine
+    image: nginx:1.24-alpine
     container_name: vikuraa-nginx
     ports:
       - "9002:80"

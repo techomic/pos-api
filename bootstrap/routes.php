@@ -22,3 +22,5 @@ $route->get('/rounding-round-number', TestController::class . ':testRoundNumber'
 $route->get('/test-create-pdf', TestController::class . ':testCreatingPdf');
 $route->get('/test-uri', TestController::class . ':testUri');
 $route->get('/generate-random-bytes/{length}', TestController::class . ':generateRandomBytes');
+$route->get('/encrypt/{string}', TestController::class . ':testEncryption');
+$route->get('/test-hashing', TestController::class . ':testHashing');
