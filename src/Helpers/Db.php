@@ -4,7 +4,7 @@ namespace Vikuraa\Helpers;
 
 use PDO;
 
-class Db extends PDO
+class Db
 {
     protected $container;
     protected $host;
@@ -13,6 +13,8 @@ class Db extends PDO
     protected $name;
     protected $user;
     protected $password;
+    protected $pdo;
+    protected $stmt;
 
     public function __construct($container, $user, $password)
     {
@@ -37,6 +39,19 @@ class Db extends PDO
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false,
         ];
-        parent::__construct($dsn, null, null, $options);
+
+        $this->pdo = new PDO($dsn, null, null, $options);
+    }
+
+    public function query(string $query, array $params = [])
+    {
+        if (count($params) > 0) {
+            $this->stmt = $this->pdo->prepare($query);
+            $this->stmt->execute($params);
+            return $this->stmt->fetchAll();
+        }
+        
+        $this->stmt = $this->pdo->query($query);
+        return $this->stmt->fetchAll();
     }
 }
