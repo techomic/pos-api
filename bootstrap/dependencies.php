@@ -8,6 +8,8 @@ use Vikuraa\Helpers\DomPdfCreator;
 use Vikuraa\Helpers\Common;
 use Vikuraa\Helpers\Security;
 use Vikuraa\Helpers\Jwt;
+use Vikuraa\Helpers\EncryptionInterface;
+use Vikuraa\Helpers\Encryption;
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
@@ -60,6 +62,10 @@ return function (ContainerBuilder $containerBuilder) {
 
         DomPdfCreator::class => function (ContainerInterface $c) {
             return new DomPdfCreator($c);
+        },
+
+        EncryptionInterface::class => function (ContainerInterface $c) {
+            return new Encryption($c);
         },
     ]);
 };
