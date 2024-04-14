@@ -32,7 +32,7 @@ class Db
         . ';user=' . $this->user 
         . ';password=' . $this->password 
         . ';sslmode=' . $this->sslmode 
-        . ';charset=utf8';
+        . ';';
 
         $options = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -41,6 +41,11 @@ class Db
         ];
 
         $this->pdo = new PDO($dsn, null, null, $options);
+    }
+
+    public function connected(): bool
+    {
+        return $this->pdo->getAttribute(PDO::ATTR_CONNECTION_STATUS) !== null;
     }
 
     public function query(string $query, array $params = [])

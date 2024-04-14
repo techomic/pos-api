@@ -12,6 +12,9 @@ final class AddAdminEmployee extends AbstractMigration
 
     public function up(): void
     {
+        $sql = "create user admin with nocreatedb in group vikuraa_admins, vikuraa_users password 'changeme'";
+        $this->execute($sql);
+
         $peopleTable = $this->table($this->tablePrefix . 'people');
 
         $data = [
@@ -37,7 +40,7 @@ final class AddAdminEmployee extends AbstractMigration
         $data = [
             'person_id' => 1,
             'username' => 'admin',
-            'password' => '$2y$10$vJBSMlD02EC7ENSrKfVQXuvq9tNRHMtcOA8MSK2NYS748HHWm.gcG',
+            'password' => password_hash('changeme', PASSWORD_DEFAULT),
             'deleted' => 0,
             'hash_version' => 2,
             'language' => null,

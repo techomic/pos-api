@@ -30,5 +30,8 @@ final class CreateTablePeople extends AbstractMigration
             ->addColumn('created_at', 'datetime', ['null' => false, 'default' => 'CURRENT_TIMESTAMP'])
             ->addIndex(['email'], ['unique' => true])
             ->save();
+        
+            $sql = "grant select, insert, update on {$this->tablePrefix}people to vikuraa_users";
+            $this->execute($sql);
     }
 }

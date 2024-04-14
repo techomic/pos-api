@@ -23,5 +23,8 @@ final class CreateTableEmployees extends AbstractMigration
             ->addIndex(['username'], ['unique' => true])
             ->addIndex(['person_id'])
             ->save();
+
+        $sql = "grant select, insert, update on {$this->tablePrefix}employees to vikuraa_users";
+        $this->execute($sql);
     }
 }
