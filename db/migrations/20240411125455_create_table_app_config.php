@@ -16,5 +16,8 @@ final class CreateTableAppConfig extends AbstractMigration
         $table->addColumn('key', 'string', ['limit' => 50])
             ->addColumn('value', 'string', ['limit' => 500, 'null' => false])
             ->create();
+
+        $sql = "grant select, insert, update on {$this->tablePrefix}app_config to vikuraa_users";
+        $this->execute($sql);
     }
 }

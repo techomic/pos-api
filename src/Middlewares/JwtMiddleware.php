@@ -29,18 +29,13 @@ class JwtMiddleware
 
         try {
             $this->verifyToken($request);
-        } catch (RuntimeException $exception) {
+        } catch (RuntimeException $e) {
 
             $response = $handler->handle($request);
 
-            // return $response->withJson([
-            //     'code' => 50014,
-            //     'message' => $exception->getMessage()
-            // ], 200);
-            $response->getBody()->write(json_encode([
-                'code' => 50014,
-                'message' => $exception->getMessage()
-            ]));
+            return $response->withJson([
+                'message' => $e->getMessage()
+            ], 200);
             return $response->withHeader('Content-Type', 'application/json');
         }
 
@@ -59,8 +54,8 @@ class JwtMiddleware
 
         try {
             return $jwtHelper->decode($token, 900); // 15 minutes
-        } catch (RuntimeException $exception) {
-            throw $exception;
+        } catch (RuntimeException $e) {
+            throw $e;
         }
     }
 }

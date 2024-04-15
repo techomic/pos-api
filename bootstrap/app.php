@@ -41,6 +41,12 @@ AppFactory::setContainer($container);
 
 $app = AppFactory::create();
 
+// Login routes
+$app->group('/user', function (RouteCollectorProxy $route) {
+    include __DIR__ . '/../src/Modules/Login/routes.php';
+    // $route->post('/login', 'Vikuraa\Modules\Login\LoginController:login');
+});
+
 // Register all the routes.
 $app->group('', function (RouteCollectorProxy $route) {
     include __DIR__ . '/routes.php';

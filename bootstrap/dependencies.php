@@ -1,7 +1,9 @@
 <?php
 
 use DI\ContainerBuilder;
-// use Monolog\Logger;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Psr\Log\LoggerInterface;
 use Psr\Container\ContainerInterface;
 use Vikuraa\Helpers\RoundingMode;
 use Vikuraa\Helpers\DomPdfCreator;
@@ -13,18 +15,18 @@ use Vikuraa\Helpers\Encryption;
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
-        // LoggerInterface::class => function (ContainerInterface $c) {
-        //     $logger = new Logger($c->get('settings')['log_db']['channel']);
+        LoggerInterface::class => function (ContainerInterface $c) {
+            $logger = new Logger('app');
 
-        //     $pgHandler = new PostgresLogHandler($c);
+            // $pgHandler = new PostgresLogHandler($c);
 
-        //     $logger->pushHandler($pgHandler);
-        //     if (getenv('APP_DEBUG') == 1) {
-        //         $logger->pushHandler(new StreamHandler(__DIR__ . '/../logs/iims.log'));
-        //     }
+            // $logger->pushHandler($pgHandler);
+            if (getenv('APP_DEBUG') == 1) {
+                $logger->pushHandler(new StreamHandler(__DIR__ . '/../logs/app.log'));
+            }
 
-        //     return $logger;
-        // },
+            return $logger;
+        },
         // 'cache' => function (ContainerInterface $c) {
         //     $settings = $c->get('settings')['redis'];
         //     $client = new Client($settings);

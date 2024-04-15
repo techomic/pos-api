@@ -23,6 +23,9 @@ final class CreateViewEmployeePerson extends AbstractMigration
                 e.language_code
             from {$this->tablePrefix}employees e
             join {$this->tablePrefix}people p on e.person_id = p.person_id");
+        
+        $sql = "grant select on {$this->tablePrefix}employee_person to vikuraa_users";
+        $this->execute($sql);
     }
 
     public function down(): void
