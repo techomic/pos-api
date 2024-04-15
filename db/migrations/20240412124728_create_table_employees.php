@@ -15,7 +15,7 @@ final class CreateTableEmployees extends AbstractMigration
         $table = $this->table($this->tablePrefix . 'employees', ['id' => false, 'primary_key' => 'person_id']);
         $table->addColumn('person_id', 'integer', ['null' => false])
             ->addColumn('username', 'string', ['limit' => 255, 'null' => false])
-            ->addColumn('password', 'string', ['limit' => 255, 'null' => false])
+            // ->addColumn('password', 'string', ['limit' => 255, 'null' => false]) // Password will be managed on the postgres server
             ->addColumn('deleted', 'boolean', ['null' => false, 'default' => 0])
             ->addColumn('hash_version', 'smallinteger', ['null' => false, 'default' => 2])
             ->addColumn('language', 'string', ['limit' => 48, 'null' => true])
