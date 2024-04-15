@@ -3,6 +3,9 @@
 namespace Vikuraa\Helpers;
 
 use PDO;
+use PDOException;
+use \Vikuraa\Exceptions\ConnectionException;
+use Psr\Log\LoggerInterface;
 
 class Db
 {
@@ -15,6 +18,7 @@ class Db
     protected $password;
     protected $pdo;
     protected $stmt;
+    protected $logger;
 
     public function __construct($container, $user, $password)
     {
@@ -25,7 +29,8 @@ class Db
         $this->name = $this->container->get('settings')['db']['name'];
         $this->user = $user;
         $this->password = $password;
-        
+        $this->logger = $this->container->get(LoggerInterface::class);
+
         $dsn = 'pgsql:host=' . $this->host
         . ';port=' . $this->port
         . ';dbname=' . $this->name 
@@ -40,7 +45,12 @@ class Db
             PDO::ATTR_EMULATE_PREPARES => false,
         ];
 
-        $this->pdo = new PDO($dsn, null, null, $options);
+        try {
+            $this->pdo = new PDO($dsn, null, null, $options);
+        } catch (PDOException $e) {
+            $this->logger->debug($e->getMessage());
+            throw new ConnectionException('Database connection failed', $e->getCode(), $e);
+        }
     }
 
     public function connected(): bool
