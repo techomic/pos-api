@@ -6,8 +6,10 @@ use Slim\Factory\AppFactory;
 use Dotenv\Dotenv;
 use Dotenv\Exception\InvalidPathException;
 use DI\ContainerBuilder;
+use Psr\Log\LoggerInterface;
 use Slim\Routing\RouteCollectorProxy;
 use Vikuraa\Middlewares\JwtMiddleware;
+use Vikuraa\Middlewares\DbMiddleware;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -41,6 +43,9 @@ AppFactory::setContainer($container);
 
 $app = AppFactory::create();
 
+$logger = $container->get(LoggerInterface::class);
+$errorMiddleware = $app->addErrorMiddleware(boolval($debugMode), true, true, $logger);
+
 // Login routes
 $app->group('/user', function (RouteCollectorProxy $route) {
     include __DIR__ . '/../src/Modules/Login/routes.php';
@@ -51,4 +56,5 @@ $app->group('/user', function (RouteCollectorProxy $route) {
 $app->group('', function (RouteCollectorProxy $route) {
     include __DIR__ . '/routes.php';
 })
-->add(new JwtMiddleware($container));
+->add(new JwtMiddleware($container))
+->add(new DbMiddleware($container));

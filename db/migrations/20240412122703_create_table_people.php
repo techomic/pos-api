@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 use Phinx\Migration\AbstractMigration;
 
-require_once __DIR__ . '/../MigrationTrait.php';
-
-
 final class CreateTablePeople extends AbstractMigration
 {
-    use MigrationTrait;
 
     public function change(): void
     {
-        $table = $this->table($this->tablePrefix . 'people', ['id' => false, 'primary_key' => 'person_id']);
+        $table = $this->table('people', ['id' => false, 'primary_key' => 'person_id']);
         $table->addColumn('person_id', 'integer', ['identity' => true])
             ->addColumn('first_name', 'string', ['limit' => 255, 'null' => false])
             ->addColumn('last_name', 'string', ['limit' => 255, 'null' => false])
@@ -31,7 +27,7 @@ final class CreateTablePeople extends AbstractMigration
             ->addIndex(['email'], ['unique' => true])
             ->save();
         
-            $sql = "grant select, insert, update on {$this->tablePrefix}people to vikuraa_users";
+            $sql = "grant select, insert, update on people to vikuraa_users";
             $this->execute($sql);
     }
 }

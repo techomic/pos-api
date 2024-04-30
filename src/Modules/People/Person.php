@@ -7,26 +7,26 @@ use Vikuraa\Core\Entity;
 
 class Person extends Entity
 {
-    private int $personId;
-    private string $firstName;
-    private string $lastName;
-    private ?string $gender;
-    private string $phoneNumber;
-    private string $email;
-    private string $address1;
-    private string $address2;
-    private string $city;
-    private string $state;
-    private string $zip;
-    private string $country;
-    private string $comments;
-    private DateTime $createdAt;
+    protected int $personId;
+    protected string $firstName;
+    protected string $lastName;
+    protected ?string $gender;
+    protected string $phoneNumber;
+    protected string $email;
+    protected string $address1;
+    protected string $address2;
+    protected string $city;
+    protected string $state;
+    protected string $zip;
+    protected string $country;
+    protected string $comments;
+    protected DateTime $createdAt;
 
     
 
-    public static function fromDbArray(array $data): self
+    public static function fromDbArray(array $data): static
     {
-        $person = new self();
+        $person = new static();
         $person->personId = $data['person_id'];
         $person->firstName = $data['first_name'];
         $person->lastName = $data['last_name'];

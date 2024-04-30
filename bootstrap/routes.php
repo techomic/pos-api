@@ -13,6 +13,8 @@ $route->get('/', function($request, $response) {
     return $response;
 });
 
+include __DIR__ . '/../src/Modules/AppConfig/routes.php';
+
 /**
  * Testing
  */

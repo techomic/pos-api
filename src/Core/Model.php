@@ -3,6 +3,7 @@
 namespace Vikuraa\Core;
 
 use DI\Container;
+use Vikuraa\Helpers\Db;
 
 abstract class Model
 {
@@ -13,8 +14,8 @@ abstract class Model
     {
         $this->container = $container;
 
-        if ($container->has('db')) {
-            $this->db = $container->get('db');
+        if ($container->has(Db::class)) {
+            $this->db = $container->get(Db::class);
         }
     }
 }

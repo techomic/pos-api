@@ -36,7 +36,7 @@ abstract class Entity
         throw new Exception("Property $key does not exist");
     }
 
-    public static function fromArray(array $data): self
+    public static function fromArray(array $data): static
     {
         $entity = new self();
         foreach ($data as $key => $value) {
@@ -46,5 +46,10 @@ abstract class Entity
         return $entity;
     }
 
-    abstract public static function fromDbArray(array $data): self;
+    abstract public static function fromDbArray(array $data): static;
+
+    public function toArray(): array
+    {
+        return get_object_vars($this);
+    }
 }
