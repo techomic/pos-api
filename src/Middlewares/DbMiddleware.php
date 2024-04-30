@@ -31,7 +31,7 @@ class DbMiddleware
 
             if ($db->connected()) {
                 $this->container->set(Db::class, $db);
-                $handler->handle($request);
+                return $handler->handle($request);
             } else {
                 $response = $handler->handle($request);
                 return $response->withJson(['message' => 'Database connection failed'], 401);
