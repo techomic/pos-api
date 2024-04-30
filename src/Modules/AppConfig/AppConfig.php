@@ -6,12 +6,18 @@ use Vikuraa\Core\Entity;
 
 class AppConfig extends Entity
 {
-    private string $key;
-    private string $value;
+    protected string $key;
+    protected string $value;
 
-    public static function fromDbArray(array $data): self
+    /**
+     * Crate a new AppConfig instance from an array of data from the database.
+     * 
+     * @param array $data
+     * @return AppConfig
+     */
+    public static function fromDbArray(array $data): static
     {
-        $appConfig = new self();
+        $appConfig = new static();
         $appConfig->key = $data['key'];
         $appConfig->value = $data['value'];
         return $appConfig;
