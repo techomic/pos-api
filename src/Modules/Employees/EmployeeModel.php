@@ -15,8 +15,8 @@ class EmployeeModel extends Model
     {
         parent::__construct($container);
 
-        $this->tableName = $this->container->get('settings')['db']['tables_prefix'] . 'employees';
-        $this->viewName = $this->container->get('settings')['db']['tables_prefix'] . 'employee_person';
+        $this->tableName = 'employees';
+        $this->viewName = 'employee_person';
     }
 
     public function listActive(): Employees

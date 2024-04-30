@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use Phinx\Migration\AbstractMigration;
 
-require_once __DIR__ . '/../MigrationTrait.php';
 
 final class AppConfigData extends AbstractMigration
 {
@@ -12,7 +11,7 @@ final class AppConfigData extends AbstractMigration
 
     public function up(): void
     {
-        $table = $this->table("{$this->tablePrefix}app_config");
+        $table = $this->table("app_config");
 
         $data = [
             ['key' => 'address', 'value' => '123 Nowhere street'],
@@ -146,6 +145,6 @@ final class AppConfigData extends AbstractMigration
 
     public function down(): void
     {
-        $this->execute("DELETE FROM {$this->tablePrefix}app_config");
+        $this->execute("DELETE FROM app_config");
     }
 }

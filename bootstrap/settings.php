@@ -34,7 +34,6 @@ return function (ContainerBuilder $containerBuilder) {
                 'name'      =>  getenv('DB_NAME') ?? 'vikuraa',
                 'username'  =>  getenv('DB_USER') ?? 'postgres',
                 'password'  =>  getenv('DB_PASSWORD') ?? '',
-                'table_prefix' => getenv('DB_TABLE_PREFIX') ?? 'vikuraa_',
             ],
         ],
     ]);

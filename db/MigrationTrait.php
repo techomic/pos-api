@@ -9,7 +9,6 @@ require __DIR__ . '/../vendor/autoload.php';
 
 trait MigrationTrait
 {
-    protected ?string $tablePrefix = null;
     protected ?string $dbName = null;
 
     public function init()
@@ -20,7 +19,6 @@ trait MigrationTrait
             // TODO: Need to log the error here
         }
 
-        $this->tablePrefix = getenv('DB_TABLE_PREFIX') ?? 'vikuraa_';
         $this->dbName = getenv('DB_NAME') ?? 'vikuraa';
     }
 }
