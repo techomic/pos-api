@@ -7,18 +7,18 @@ use Vikuraa\Modules\People\Person;
 
 class Employee extends Person
 {
-    private string $username;
-    private bool $deleted;
-    private int $hashVersion;
-    private ?string $language;
-    private ?string $languageCode;
+    protected string $username;
+    protected bool $deleted;
+    protected int $hashVersion;
+    protected ?string $language;
+    protected ?string $languageCode;
     
 
-    public static function fromDbArray(array $data): self
+    public static function fromDbArray(array $data): static
     {
         parent::fromDbArray($data);
         
-        $employee = new self();
+        $employee = new static();
 
         $employee->username = $data['username'];
         $employee->deleted = $data['deleted'];
