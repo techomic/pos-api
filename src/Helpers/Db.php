@@ -4,8 +4,10 @@ namespace Vikuraa\Helpers;
 
 use PDO;
 use PDOException;
-use \Vikuraa\Exceptions\ConnectionException;
+use Vikuraa\Exceptions\ConnectionException;
 use Psr\Log\LoggerInterface;
+use Vikuraa\Exceptions\DatabaseException;
+use Exception;
 
 class Db
 {
@@ -48,7 +50,6 @@ class Db
         try {
             $this->pdo = new PDO($dsn, null, null, $options);
         } catch (PDOException $e) {
-            $this->logger->debug($e->getMessage());
             throw new ConnectionException('Database connection failed', $e->getCode(), $e);
         }
     }
@@ -60,13 +61,40 @@ class Db
 
     public function query(string $query, array $params = [])
     {
-        if (count($params) > 0) {
-            $this->stmt = $this->pdo->prepare($query);
-            $this->stmt->execute($params);
+        try {
+            if (count($params) > 0) {
+                $this->stmt = $this->pdo->prepare($query);
+                $this->stmt->execute($params);
+                return $this->stmt->fetchAll();
+            }
+            
+            $this->stmt = $this->pdo->query($query);
             return $this->stmt->fetchAll();
+        } catch (PDOException $e) {
+            throw new DatabaseException('Database query failed: ' . $e->getMessage(), $e->getCode());
+        } catch (Exception $e) {
+            throw $e;
         }
-        
-        $this->stmt = $this->pdo->query($query);
-        return $this->stmt->fetchAll();
+    }
+
+    public function execute(string $query, array $params = [], bool $needInsertId = false): mixed
+    {
+        try {
+            if (count($params) === 0) {
+                $result = $this->pdo->exec($query);
+            }
+            $this->stmt = $this->pdo->prepare($query);
+            $result = $this->stmt->execute($params);
+
+            if (strpos(strtoupper($query), 'INSERT') === 0 && $needInsertId) {
+                return $this->pdo->lastInsertId();
+            }
+
+            return $result;
+        } catch (PDOException $e) {
+            throw new DatabaseException('Database query failed: ' . $e->getMessage(), $e->getCode());
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 }
