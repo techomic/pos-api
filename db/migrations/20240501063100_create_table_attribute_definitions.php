@@ -16,9 +16,9 @@ final class CreateTableAttributeDefinitions extends AbstractMigration
             ->addColumn('flags', 'smallinteger', ['null' => false])
             ->addColumn('fk', 'integer', ['null' => true])
             ->addColumn('deleted', 'boolean', ['null' => false, 'default' => 0])
-            ->addIndex(['fk'])
-            ->addIndex(['name'])
-            ->addIndex(['type'])
+            ->addIndex(['fk'], ['name' => 'attribute_definitions_fk'])
+            ->addIndex(['name'], ['name' => 'attribute_definitions_name'])
+            ->addIndex(['type'], ['name' => 'attribute_definitions_type'])
             ->addForeignKey('fk', 'attribute_definitions', 'id', ['delete' => 'SET_NULL', 'update' => 'CASCADE'])
             ->save();
         

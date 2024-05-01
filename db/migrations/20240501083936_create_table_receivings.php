@@ -17,10 +17,10 @@ final class CreateTableReceivings extends AbstractMigration
             ->addColumn('comment', 'text')
             ->addColumn('payment_type', 'string', ['limit' => 20])
             ->addColumn('reference', 'string', ['limit' => 32])
-            ->addIndex(['supplier_id'], ['name' => 'supplier_id'])
-            ->addIndex(['employee_id'], ['name' => 'employee_id'])
-            ->addIndex(['reference'], ['name' => 'reference'])
-            ->addIndex(['receiving_time'], ['name' => 'receiving_time'])
+            ->addIndex(['supplier_id'], ['name' => 'receivings_supplier_id'])
+            ->addIndex(['employee_id'], ['name' => 'receivings_employee_id'])
+            ->addIndex(['reference'], ['name' => 'receivings_reference'])
+            ->addIndex(['receiving_time'], ['name' => 'receivings_receiving_time'])
             ->save();
         
         $sql = "grant select, insert, update, delete on receivings to vikuraa_users";

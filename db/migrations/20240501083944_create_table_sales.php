@@ -8,7 +8,6 @@ final class CreateTableSales extends AbstractMigration
 {
     // TODO: add foreign key to customer_id
     // TODO: add foreign key to employee_id
-    // TODO: add foreign key to dinner_table_id
     public function up(): void
     {
         $this->table('sales')
@@ -21,12 +20,12 @@ final class CreateTableSales extends AbstractMigration
             ->addColumn('sale_status', 'boolean', ['null' => false, 'default' => false])
             ->addColumn('dinner_table_id', 'integer')
             ->addColumn('work_order_number', 'string', ['limit' => 32])
-            ->addColumn('sale_type', 'smallint', ['null' => false, 'default' => 0])
-            ->addIndex(['invoice_number'], ['name' => 'invoice_number', 'unique' => true])
-            ->addIndex(['customer_id'], ['name' => 'customer_id'])
-            ->addIndex(['employee_id'], ['name' => 'employee_id'])
-            ->addIndex(['sale_time'], ['name' => 'sale_time'])
-            ->addIndex(['dinner_table_id'], ['name' => 'dinner_table_id'])
+            ->addColumn('sale_type', 'smallinteger', ['null' => false, 'default' => 0])
+            ->addIndex(['invoice_number'], ['name' => 'sales_invoice_number', 'unique' => true])
+            ->addIndex(['customer_id'], ['name' => 'sales_customer_id'])
+            ->addIndex(['employee_id'], ['name' => 'sales_employee_id'])
+            ->addIndex(['sale_time'], ['name' => 'sales_sale_time'])
+            ->addIndex(['dinner_table_id'], ['name' => 'sales_dinner_table_id'])
             ->save();
         
         $sql = "grant select, insert, update, delete on sales to vikuraa_users";
