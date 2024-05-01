@@ -7,7 +7,7 @@ use Phinx\Migration\AbstractMigration;
 final class CreateTablePeople extends AbstractMigration
 {
 
-    public function change(): void
+    public function up(): void
     {
         $table = $this->table('people', ['id' => false, 'primary_key' => 'person_id']);
         $table->addColumn('person_id', 'integer', ['identity' => true])
@@ -29,5 +29,10 @@ final class CreateTablePeople extends AbstractMigration
         
             $sql = "grant select, insert, update on people to vikuraa_users";
             $this->execute($sql);
+    }
+
+    public function down(): void
+    {
+        $this->table('people')->drop()->save();
     }
 }

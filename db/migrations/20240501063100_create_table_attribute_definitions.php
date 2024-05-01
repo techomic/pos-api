@@ -6,14 +6,14 @@ use Phinx\Migration\AbstractMigration;
 
 final class CreateTableAttributeDefinitions extends AbstractMigration
 {
-    public function change(): void
+    public function up(): void
     {
         $this->table('attribute_definitions')
             // ->addColumn('id', 'integer', ['identity' => true])
             ->addColumn('name', 'string', ['limit' => 255, 'null' => false])
             ->addColumn('type', 'string', ['limit' => 45, 'null' => false])
             ->addColumn('unit', 'string', ['limit' => 16, 'null' => true])
-            ->addColumn('flags', 'boolean', ['null' => false])
+            ->addColumn('flags', 'smallinteger', ['null' => false])
             ->addColumn('fk', 'integer', ['null' => true])
             ->addColumn('deleted', 'boolean', ['null' => false, 'default' => 0])
             ->addIndex(['fk'])
@@ -24,5 +24,10 @@ final class CreateTableAttributeDefinitions extends AbstractMigration
         
             $sql = "grant select, insert, update on attribute_definitions to vikuraa_users";
             $this->execute($sql);
+    }
+
+    public function down(): void
+    {
+        $this->table('attribute_definitions')->drop()->save();
     }
 }

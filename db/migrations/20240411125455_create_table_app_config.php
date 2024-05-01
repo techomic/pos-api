@@ -7,7 +7,7 @@ use Phinx\Migration\AbstractMigration;
 final class CreateTableAppConfig extends AbstractMigration
 {
     
-    public function change(): void
+    public function up(): void
     {
         $table = $this->table('app_config', ['id' => false, 'primary_key' => 'key']);
         $table->addColumn('key', 'string', ['limit' => 50])
@@ -16,5 +16,10 @@ final class CreateTableAppConfig extends AbstractMigration
 
         $sql = "grant select, insert, update on app_config to vikuraa_users";
         $this->execute($sql);
+    }
+
+    public function down(): void
+    {
+        $this->table('app_config')->drop()->save();
     }
 }
