@@ -1,3 +1,5 @@
+!! THIS IS A WORK IN PROGRESS. Not even remotely ready for production.
+
 # Vikuraa
 This is the backend API of a POS system, which is inspired by Opensourcepos.
 
