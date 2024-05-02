@@ -58,7 +58,7 @@ class AppConfigModel extends Model
      * @return AppConfig
      * @throws NoDataException if no app config is found
      */
-    public function get($key): AppConfig
+    public function get(string $key): AppConfig
     {
         $sql = "SELECT * FROM app_config WHERE key = :key";
 
@@ -87,8 +87,90 @@ class AppConfigModel extends Model
     {
         $sql = "INSERT INTO app_config (key, value) VALUES (:key, :value)";
 
-        $insertId = $this->db->execute($sql, ['key' => $key, 'value' => $value]);
+        return $this->db->execute($sql, ['key' => $key, 'value' => $value]);
+    }
 
-        return $insertId;
+    /**
+     * Delete an app config by key.
+     * 
+     * @param string $key
+     * @return bool
+     * @throws DatabaseException if the app config could not be deleted
+     */
+    public function delete(string $key): bool
+    {
+        $sql = "DELETE FROM app_config WHERE key = :key";
+
+        return $this->db->execute($sql, ['key' => $key]);
+    }
+
+    /**
+     * Delete all app configs.
+     * 
+     * @return bool
+     * @throws DatabaseException if the app configs could not be deleted
+     */
+    public function deleteAll(): bool
+    {
+        $sql = "DELETE FROM app_config";
+
+        return $this->db->execute($sql);
+    }
+
+    /**
+     * Acquire next invoice sequence.
+     * 
+     * @param bool $save
+     * @return int
+     * @throws NoDataException if the sequence could not be acquired
+     */
+    public function acquireNextInvoiceSequence(bool $save = true): int
+    {
+        $appConfig = $this->get('last_used_invoice_number');
+        $next = intval($appConfig->value) + 1;
+
+        if ($save) {
+            $this->save('last_used_invoice_number', strval($next));
+        }
+
+        return $next;
+    }
+
+    /**
+     * Acquire next quote sequence.
+     * 
+     * @param bool $save
+     * @return int
+     * @throws NoDataException if the sequence could not be acquired
+     */
+    public function acquireNextQuoteSequence(bool $save = true): int
+    {
+        $appConfig = $this->get('last_used_quote_number');
+        $next = intval($appConfig->value) + 1;
+
+        if ($save) {
+            $this->save('last_used_quote_number', strval($next));
+        }
+
+        return $next;
+    }
+
+    /**
+     * Acquire next work order sequence.
+     * 
+     * @param bool $save
+     * @return int
+     * @throws NoDataException if the sequence could not be acquired
+     */
+    public function acquireNextWorkOrderSequence(bool $save = true): int
+    {
+        $appConfig = $this->get('last_used_work_order_number');
+        $next = intval($appConfig->value) + 1;
+
+        if ($save) {
+            $this->save('last_used_work_order_number', strval($next));
+        }
+
+        return $next;
     }
 }

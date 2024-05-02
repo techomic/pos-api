@@ -97,4 +97,21 @@ class Db
             throw $e;
         }
     }
+
+    public function count(string $query, array $params = []): int
+    {
+        try {
+            $this->stmt = $this->pdo->prepare($query);
+            if (count($params) > 0) {
+                $this->stmt->execute($params);
+                return $this->stmt->rowCount();
+            }
+            $this->stmt->execute();
+            return $this->stmt->rowCount();
+        } catch (PDOException $e) {
+            throw new DatabaseException('Database query failed: ' . $e->getMessage(), $e->getCode());
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
 }
