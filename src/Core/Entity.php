@@ -18,13 +18,8 @@ abstract class Entity
 
     public function __set($key, $value)
     {
-        if ($key === 'cratedAt') {
+        if (in_array($key, ['cratedAt', 'date'])) {
             $this->createdAt = new DateTime($value);
-            return;
-        }
-
-        if ($key === 'gender') {
-            $this->gender = ['M', 'F'][$value];
             return;
         }
 

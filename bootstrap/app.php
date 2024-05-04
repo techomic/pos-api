@@ -10,6 +10,7 @@ use Psr\Log\LoggerInterface;
 use Slim\Routing\RouteCollectorProxy;
 use Vikuraa\Middlewares\JwtMiddleware;
 use Vikuraa\Middlewares\DbMiddleware;
+use Vikuraa\Middlewares\AppConfigMiddleware;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -57,4 +58,5 @@ $app->group('', function (RouteCollectorProxy $route) {
     include __DIR__ . '/routes.php';
 })
 ->add(new JwtMiddleware($container))
+->add(new AppConfigMiddleware($container))
 ->add(new DbMiddleware($container));
