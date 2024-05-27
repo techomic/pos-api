@@ -10,4 +10,19 @@ class AppConfigs extends Collection
     {
         parent::__construct(AppConfig::class);
     }
+
+    public function getValue($key): mixed
+    {
+        $found = false;
+        foreach ($this->items as $appConfig) {
+            if ($appConfig->key === $key) {
+                $found = true;
+                return $appConfig->value;
+            }
+        }
+
+        if (!$found) {
+            return null;
+        }
+    }
 }

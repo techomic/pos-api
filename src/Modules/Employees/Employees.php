@@ -6,10 +6,6 @@ use Vikuraa\Core\Collection;
 
 class Employees extends Collection
 {
-    public function add(Employee $employee): void
-    {
-        $this->items[] = $employee;
-    }
 
     public function addAll(array $employees): void
     {

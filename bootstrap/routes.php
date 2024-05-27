@@ -1,6 +1,7 @@
 <?php
 
 use Vikuraa\Modules\Test\TestController;
+
 /**
  * This is the main routes file for the application.
  * 

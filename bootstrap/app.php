@@ -10,6 +10,7 @@ use Psr\Log\LoggerInterface;
 use Slim\Routing\RouteCollectorProxy;
 use Vikuraa\Middlewares\JwtMiddleware;
 use Vikuraa\Middlewares\DbMiddleware;
+use Vikuraa\Middlewares\AppConfigMiddleware;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -46,6 +47,20 @@ $app = AppFactory::create();
 $logger = $container->get(LoggerInterface::class);
 $errorMiddleware = $app->addErrorMiddleware(boolval($debugMode), true, true, $logger);
 
+/**
+ * Get the OpenApi documentation.
+ */
+$app->get('/api-docs', function ($request, $response) {
+    $files = [__DIR__ . '/../src/Core/Controller.php'];
+    $files = array_merge($files, glob(__DIR__ . '/../src/Modules/*/*Controller.php'));
+    $openapi = OpenApi\Generator::scan($files);
+    
+    $yaml = $openapi->toYaml();
+
+    $response->getBody()->write($yaml);
+    return $response->withAddedHeader('Content-Type', 'application/x-yaml');
+});
+
 // Login routes
 $app->group('/user', function (RouteCollectorProxy $route) {
     include __DIR__ . '/../src/Modules/Login/routes.php';
@@ -57,4 +72,5 @@ $app->group('', function (RouteCollectorProxy $route) {
     include __DIR__ . '/routes.php';
 })
 ->add(new JwtMiddleware($container))
+->add(new AppConfigMiddleware($container))
 ->add(new DbMiddleware($container));
