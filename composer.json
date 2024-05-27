@@ -10,7 +10,8 @@
         "symfony/yaml": "^7.0",
         "tuupola/branca": "^2.3",
         "monolog/monolog": "^3.6",
-        "zircote/swagger-php": "^4.9"
+        "zircote/swagger-php": "^4.9",
+        "doctrine/annotations": "^2.0"
     },
     "autoload": {
         "psr-4": {
