@@ -11,7 +11,8 @@
         "tuupola/branca": "^2.3",
         "monolog/monolog": "^3.6",
         "zircote/swagger-php": "^4.9",
-        "doctrine/annotations": "^2.0"
+        "doctrine/annotations": "^2.0",
+        "predis/predis": "^2.2"
     },
     "autoload": {
         "psr-4": {
