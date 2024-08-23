@@ -25,7 +25,7 @@ class DbMiddleware
 
         $username = $userData->payload->username;
         $password = $encryption->decrypt($userData->payload->password);
-
+        var_dump('entered here');
         try {
             $db = new Db($this->container, $username, $password);
 

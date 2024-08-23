@@ -25,4 +25,25 @@ class AppConfigs extends Collection
             return null;
         }
     }
+
+    public function addAll(array $items) : void
+    {
+        foreach ($items as $config) {
+            $this->add($config);
+        }
+    }
+
+    public function addFromDbArray(array $data) : void
+    {
+        $config = AppConfig::fromDbArray($data);
+
+        $this->add($config);
+    }
+
+    public function addAllFromDbArray(array $data) : void
+    {
+        foreach ($data as $config) {
+            $this->addFromDbArray($config);
+        }
+    }
 }

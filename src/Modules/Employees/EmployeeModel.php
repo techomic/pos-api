@@ -23,7 +23,7 @@ class EmployeeModel extends Model
 
     public function byUsername($username): Employee
     {
-        $sql = "SELECT * FROM employee_person WHERE username = :username and deleted = 0";
+        $sql = "SELECT * FROM employee_person WHERE username = :username and deleted = false";
 
         $data = $this->db->query($sql, [':username' => $username]);
 

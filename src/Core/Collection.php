@@ -210,4 +210,8 @@ abstract class Collection implements IteratorAggregate
         }
         return $array;
     }
+
+    abstract public function addAll(array $items) : void;
+    abstract public function addFromDbArray(array $data) : void;
+    abstract public function addAllFromDbArray(array $data) : void;
 }

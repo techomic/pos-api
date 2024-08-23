@@ -40,7 +40,7 @@ class Person extends Entity
         $person->zip = $data['zip'];
         $person->country = $data['country'];
         $person->comments = $data['comments'];
-        $person->createdAt = $data['created_at'];
+        $person->createdAt = new DateTime($data['created_at']);
         return $person;
     }
 }

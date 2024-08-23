@@ -15,11 +15,9 @@ class Employee extends Person
     
 
     public static function fromDbArray(array $data): static
-    {
-        parent::fromDbArray($data);
+    {   
+        $employee = parent::fromDbArray($data);
         
-        $employee = new static();
-
         $employee->username = $data['username'];
         $employee->deleted = $data['deleted'];
         $employee->hashVersion = $data['hash_version'];
