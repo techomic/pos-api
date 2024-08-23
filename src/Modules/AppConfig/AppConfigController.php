@@ -6,6 +6,7 @@ use Vikuraa\Core\Controller;
 use Slim\Http\Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use OpenApi\Attributes as OA;
+use Vikuraa\Helpers\Functions;
 
 class AppConfigController extends Controller
 {
@@ -61,17 +62,9 @@ class AppConfigController extends Controller
             ]);
         } catch (\Exception $e) {
             $method = __METHOD__;
-            $exception = get_class($e);
-            $message = $e->getMessage() . '. File: ' . $e->getFile() . ' on line ' . $e->getLine();
-            $this->logger->error("{$method}|{$exception}: {$message}", $e->getTrace());
-            $message = $e->getMessage();
-            $code = $e->getCode();
-            $firstLetter = $code[0];
-            if (!in_array((int)$firstLetter, [1, 2, 3, 4, 5])) {
-                $code = 500;
-                $message = 'Could not complete the operation';
-            }
-            return $response->withJson(['message' => $message], $code);
+            $exception = Functions::exceptionMessage($e, $this->logger, $method);
+            
+            return $response->withJson(['message' => $exception['message']], $exception['code']);
         }
     }
 
@@ -113,17 +106,9 @@ class AppConfigController extends Controller
             ]);
         } catch (\Exception $e) {
             $method = __METHOD__;
-            $exception = get_class($e);
-            $message = $e->getMessage() . '. File: ' . $e->getFile() . ' on line ' . $e->getLine();
-            $this->logger->error("{$method}|{$exception}: {$message}", $e->getTrace());
-            $message = $e->getMessage();
-            $code = $e->getCode();
-            $firstLetter = $code[0];
-            if (!in_array((int)$firstLetter, [1, 2, 3, 4, 5])) {
-                $code = 500;
-                $message = 'Could not complete the operation';
-            }
-            return $response->withJson(['message' => $message], $code);
+            $exception = Functions::exceptionMessage($e, $this->logger, $method);
+            
+            return $response->withJson(['message' => $exception['message']], $exception['code']);
         }
     }
 
@@ -141,16 +126,9 @@ class AppConfigController extends Controller
             return $response->withJson(['status' => 'success']);
         } catch (\Exception $e) {
             $method = __METHOD__;
-            $exception = get_class($e);
-            $message = $e->getMessage() . '. File: ' . $e->getFile() . ' on line ' . $e->getLine();
-            $this->logger->error("{$method}|{$exception}: {$message}", $e->getTrace());
-            $code = $e->getCode();
-            $firstLetter = $code[0];
-            if (!in_array((int)$firstLetter, [1, 2, 3, 4, 5])) {
-                $code = 500;
-                $message = 'Could not complete the operation';
-            }
-            return $response->withJson(['message' => $message], $code);
+            $exception = Functions::exceptionMessage($e, $this->logger, $method);
+            
+            return $response->withJson(['message' => $exception['message']], $exception['code']);
         }
     }
 }

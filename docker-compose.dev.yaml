@@ -1,5 +1,3 @@
-version: '3.0'
-
 services:
   vikuraa-php:
     build:
@@ -9,6 +7,9 @@ services:
     volumes:
       - ./public:/var/www/html
       - .:/var/www
+    depends_on:
+      - vikuraa-postgres
+      - vikuraa-valkey
 
   vikuraa-nginx:
     image: nginx:1.24-alpine
@@ -31,3 +32,7 @@ services:
       POSTGRES_DB: vikuraa
     volumes:
       - ./db/data:/var/lib/postgresql/data
+  
+  vikuraa-valkey:
+    image: valkey/valkey:7.2
+    container_name: vikuraa-valkey

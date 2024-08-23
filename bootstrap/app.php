@@ -73,4 +73,5 @@ $app->group('', function (RouteCollectorProxy $route) {
 })
 ->add(new JwtMiddleware($container))
 ->add(new AppConfigMiddleware($container))
-->add(new DbMiddleware($container));
+->add(new DbMiddleware($container))
+;

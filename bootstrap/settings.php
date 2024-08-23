@@ -35,6 +35,11 @@ return function (ContainerBuilder $containerBuilder) {
                 'username'  =>  getenv('DB_USER') ?? 'postgres',
                 'password'  =>  getenv('DB_PASSWORD') ?? '',
             ],
+            'valkey' => [
+                'scheme'    => getenv('VALKEY_SCHEME') ?? 'tcp',
+                'host'      => getenv('VALKEY_HOST') ?? 'vikuraa-valkey',
+                'port'      => getenv('VALKEY_PORT') ?? 6379,
+            ],
         ],
     ]);
 };

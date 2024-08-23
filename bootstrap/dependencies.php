@@ -12,6 +12,7 @@ use Vikuraa\Helpers\Security;
 use Vikuraa\Helpers\Jwt;
 use Vikuraa\Helpers\EncryptionInterface;
 use Vikuraa\Helpers\Encryption;
+use Vikuraa\Helpers\Cache;
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
@@ -27,16 +28,6 @@ return function (ContainerBuilder $containerBuilder) {
 
             return $logger;
         },
-        // 'cache' => function (ContainerInterface $c) {
-        //     $settings = $c->get('settings')['redis'];
-        //     $client = new Client($settings);
-        //     return new Cache($client);
-        // },
-        // 'aws' => function (ContainerInterface $c) {
-        //     $settings = $c->get('settings')['aws'];
-        //     $settings['use_path_style_endpoint'] = (bool)$settings['use_path_style_endpoint'];
-        //     return new S3Client($settings);
-        // },
         
         'language' => function (ContainerInterface $c) {
             $appLanguage = $c->get('settings')['app']['language'];
@@ -69,5 +60,9 @@ return function (ContainerBuilder $containerBuilder) {
         EncryptionInterface::class => function (ContainerInterface $c) {
             return new Encryption($c);
         },
+
+        Cache::class => function (ContainerInterface $c) {
+            return new Cache($c);
+        }
     ]);
 };
