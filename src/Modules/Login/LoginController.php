@@ -9,7 +9,8 @@ use Vikuraa\Helpers\Db;
 use Vikuraa\Helpers\Jwt;
 use Vikuraa\Helpers\EncryptionInterface;
 use OpenApi\Attributes as OA;
-
+use Vikuraa\Modules\Employees\EmployeeModel;
+use Vikuraa\Modules\Grants\GrantModel;
 class LoginController extends Controller
 {
     #[OA\PathItem(
@@ -71,15 +72,35 @@ class LoginController extends Controller
         try {
             $db = new Db($this->container, $username, $password);
 
+            
             if ($db->connected()) {
+
+                $this->container->set(Db::class, $db);
+                
                 // generate a JWT token
                 $jwt = $this->container->get(JWt::class);
                 $encryption = $this->container->get(EncryptionInterface::class);
+                $encryptedPassword = $encryption->encrypt($password);
 
-                // TODO: get the session data and store in in-memory cache
+                $employeeModel = new EmployeeModel($this->container);
+
+                $employee = $employeeModel->byUsername($username);
+
+                $grantModel = new GrantModel($this->container);
+
+                $grants = $grantModel->byPersonId($employee->personId);
+
+                $sessionData = [
+                    'password' => $encryptedPassword,
+                    'employee' => $employee->toArray(),
+                    'grants'   => $grants->toArrayDeep(),
+                ];
+
+                $this->cache->put("user_session:$username", $sessionData);
+
                 $token = $jwt->create([
                     'username' => $username,
-                    'password' => $encryption->encrypt($password)
+                    'password' => $encryptedPassword,
                 ]);
                 return $response->withJson(['message' => 'Login successful', 'token' => $token], 200);
             } else {
