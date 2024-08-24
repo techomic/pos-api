@@ -58,4 +58,9 @@ class Jwt
         $token =  $this->getToken($request);
         return json_decode($this->decode($token));
     }
+
+    public function timestamp($token)
+    {
+        return $this->branca->timestamp($token);
+    }
 }
