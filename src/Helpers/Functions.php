@@ -17,6 +17,10 @@ class Functions
         $firstLetter = ((string)$code)[0];
         if (!in_array((int)$firstLetter, [1, 2, 3, 4, 5])) {
             $code = 500;
+        }
+
+        // TODO: add all the safe exceptions to an array
+        if (!in_array($exception, ['RuntimeException'])) {
             $message = 'Could not complete the operation';
         }
 

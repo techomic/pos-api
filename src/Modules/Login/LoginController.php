@@ -11,6 +11,8 @@ use Vikuraa\Helpers\EncryptionInterface;
 use OpenApi\Attributes as OA;
 use Vikuraa\Modules\Employees\EmployeeModel;
 use Vikuraa\Modules\Grants\GrantModel;
+use Vikuraa\Helpers\Functions;
+
 class LoginController extends Controller
 {
     #[OA\PathItem(
@@ -109,5 +111,116 @@ class LoginController extends Controller
         } catch (\Exception $e) {
             return $response->withJson(['message' => $e->getMessage()], 401);
         }
+    }
+
+    #[OA\PathItem(
+        path: "/user/refresh",
+        post: new OA\Post(
+            summary: "Refresh token",
+            requestBody: new OA\RequestBody(
+                required: true,
+                content: new OA\MediaType(
+                    mediaType: "application/json",
+                    schema: new OA\Schema(
+                        properties: [
+                            new OA\Property(property: "refreshToken", type: "string")
+                        ]
+                    ),
+                    example: '{"refreshToken": "slu04LjYUO88dsfdIYIttsr7sdhgjdJGJH"}'
+                )
+            ),
+            responses: [
+                new OA\Response(
+                    response: 200,
+                    description: "Successful response",
+                    content: new OA\MediaType(
+                        mediaType: "application/json",
+                        schema: new OA\Schema(
+                            properties: [
+                                new OA\Property(property: "message", type: "string"),
+                                new OA\Property(property: "token", type: "string")
+                            ]
+                        ),
+                        example: '{"message": "Refreshed token", "token": "34RyXyVBUnbdMMHR30xUfOvqtWtscmAPdSIqBMe91Cmb6Duw8W2ZrdXUaW3RSA2a1Kj6rKoCmQ7us3En05jq3JgbM"}'
+                    )
+                ),
+                new OA\Response(
+                    response: 401,
+                    description: "Error response",
+                    content: new OA\MediaType(
+                        mediaType: "application/json",
+                        schema: new OA\Schema(
+                            properties: [
+                                new OA\Property(property: "message", type: "string")
+                            ]
+                        ),
+                        example: '{"message": "Token refresh failed"}'
+                    )
+                )
+            ]
+        )
+    )]
+    public function refreshToken(Request $request, Response $response)
+    {
+        $refreshToken = $request->getParsedBody()['refreshToken'];
+
+        if (!isset($refreshToken) || $refreshToken == null) {
+            return $response->withJson([
+                'message' => 'Refresh token is required'
+            ], 401);
+        }
+
+        try {
+            $jwtHelper = $this->container->get(Jwt::class);
+
+            
+            $createdAt = $jwtHelper->timestamp($refreshToken);
+
+            $now = time();
+
+            $elapsed = (int)(($now - $createdAt) / 60);
+
+            if ($elapsed > 5) {
+                return $response->withJson([
+                    'message' => 'Refresh token expired. Please login again.'
+                ], 401);
+            }
+
+        
+            $userData = $jwtHelper->getUserData($request);
+            $username = $userData->payload->username;
+
+            // get password from cache
+            $password = json_decode($this->cache->get("user_session:{$username}"), true)['password'];
+
+            $token = $jwtHelper->create([
+                'username' => $username,
+                'password' => $password,
+            ]);
+
+            return $response->withJson([
+                'message' => 'Refreshed token',
+                'token' => $token,
+            ]);
+        } catch (\Exception $e) {
+            $method = __METHOD__;
+            $exception = Functions::exceptionMessage($e, $this->logger, $method);
+            
+            return $response->withJson(['message' => $exception['message'], 'code' => $exception['code']], $exception['code']);
+        }
+    }
+
+    // for testing only
+    public function getRefreshToken(Request $request, Response $response)
+    {
+        $jwtHelper = $this->container->get(Jwt::class);
+
+        return $response->withJson([
+            'message' => 'Keep secret',
+            'refreshToken' => $jwtHelper->create([
+                'username' => 'admin',
+                'timestamp' => time(),
+            ])
+        ]);
     }
 }
