@@ -114,4 +114,24 @@ class Db
             throw $e;
         }
     }
+
+    public function beginTransaction(): bool
+    {
+        return $this->pdo->beginTransaction();
+    }
+
+    public function exec(string $query): int|false
+    {
+        return $this->pdo->exec($query);
+    }
+
+    public function commit(): bool
+    {
+        return $this->pdo->commit();
+    }
+
+    public function rollBack(): bool
+    {
+        return $this->pdo->rollBack();
+    }
 }

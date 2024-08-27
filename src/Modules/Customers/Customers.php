@@ -10,4 +10,23 @@ class Customers extends Collection
     {
         parent::__construct(Customer::class);
     }
+
+    public function addAll(array $items) : void
+    {
+        foreach ($items as $customer) {
+            $this->add($customer);
+        }
+    }
+
+    public function addFromDbArray(array $row) : void
+    {
+        $this->add(Customer::fromDbArray($row));
+    }
+
+    public function addAllFromDbArray(array $data) : void
+    {
+        foreach ($data as $row) {
+            $this->add(Customer::fromDbArray($row));
+        }
+    }
 }

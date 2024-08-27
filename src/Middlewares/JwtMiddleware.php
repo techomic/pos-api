@@ -69,8 +69,9 @@ class JwtMiddleware
             $response = $handler->handle($request);
 
             return $response->withJson([
+                'status' => 'error',
                 'message' => $e->getMessage()
-            ], 200);
+            ], 401);
         }
 
         return $handler->handle($request);

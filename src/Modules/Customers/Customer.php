@@ -22,9 +22,8 @@ class Customer extends Person
 
     public static function fromDbArray(array $data): static
     {
-        parent::fromDbArray($data);
+        $customer = parent::fromDbArray($data);
 
-        $customer = new static();
         $customer->companyName = $data['company_name'];
         $customer->accountNumber = $data['account_number'];
         $customer->taxable = $data['taxable'];
