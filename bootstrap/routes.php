@@ -15,7 +15,7 @@ $route->get('/', function($request, $response) {
 });
 
 include __DIR__ . '/../src/Modules/AppConfig/routes.php';
-
+include __DIR__ . '/../src/Modules/Customers/routes.php';
 /**
  * Testing
  */

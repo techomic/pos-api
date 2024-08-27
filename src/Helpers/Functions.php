@@ -15,12 +15,13 @@ class Functions
         $message = $e->getMessage();
         $code = $e->getCode();
         $firstLetter = ((string)$code)[0];
-        if (!in_array((int)$firstLetter, [1, 2, 3, 4, 5])) {
+        if (!in_array((int)$firstLetter, [1, 2, 3, 4, 5]) || strlen($code) != 3) {
             $code = 500;
         }
 
         // TODO: add all the safe exceptions to an array
-        if (!in_array($exception, ['RuntimeException'])) {
+        $allowedExceptions = ['Vikuraa\Exceptions\NoDataException', 'RuntimeException'];
+        if (!in_array($exception, $allowedExceptions)) {
             $message = 'Could not complete the operation';
         }
 
