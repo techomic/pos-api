@@ -31,6 +31,7 @@ abstract class Entity
         throw new Exception("Property $key does not exist");
     }
 
+    // the array indices should match the property names
     public static function fromArray(array $data): static
     {
         $entity = new self();

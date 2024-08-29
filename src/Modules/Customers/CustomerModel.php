@@ -338,4 +338,6 @@ class CustomerModel extends Model
 
         return $this->db->count($sql, $args);
     }
+
+    //TODO: there is one more method in this called getStats
 }
