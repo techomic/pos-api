@@ -13,7 +13,7 @@ abstract class Model
     protected Container $container;
     protected $db;
     protected LoggerInterface $logger;
-    protected $config;
+    protected AppConfigs $config;
     protected Cache $cache;
 
     public function __construct(Container $container)

@@ -7,10 +7,6 @@ use ReflectionClass;
 
 class AttributeDefinition extends Entity
 {
-    const SHOW_IN_ITEMS = 1;
-	const SHOW_IN_SALES = 2;
-	const SHOW_IN_RECEIVINGS = 4;
-
     protected $id;
     protected $name;
     protected $type;
@@ -18,6 +14,7 @@ class AttributeDefinition extends Entity
     protected $flags;
     protected $fk;
     protected $deleted;
+    protected ?string $definitionGroup;
 
     public static function fromDbArray(array $row): static
     {
@@ -29,13 +26,8 @@ class AttributeDefinition extends Entity
         $entity->flags = $row['flags'];
         $entity->fk = $row['fk'];
         $entity->deleted = $row['deleted'];
+        $entity->definitionGroup = $row['definition_group'] == null ? null : $row['definition_group']; 
 
         return $entity;
-    }
-
-    public static function getFlags(): array
-    {
-        $class = new ReflectionClass(static::class);
-        return array_flip($class->getConstants());
     }
 }
