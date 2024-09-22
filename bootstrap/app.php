@@ -47,24 +47,9 @@ $app = AppFactory::create();
 $logger = $container->get(LoggerInterface::class);
 $errorMiddleware = $app->addErrorMiddleware(boolval($debugMode), true, true, $logger);
 
-/**
- * Get the OpenApi documentation.
- */
-$app->get('/api-docs', function ($request, $response) {
-    $files = [__DIR__ . '/../src/Core/Controller.php'];
-    $files = array_merge($files, glob(__DIR__ . '/../src/Modules/*/*Controller.php'));
-    $openapi = OpenApi\Generator::scan($files);
-    
-    $yaml = $openapi->toYaml();
-
-    $response->getBody()->write($yaml);
-    return $response->withAddedHeader('Content-Type', 'application/x-yaml');
-});
-
 // Login routes
 $app->group('/user', function (RouteCollectorProxy $route) {
     include __DIR__ . '/../src/Modules/Login/routes.php';
-    // $route->post('/login', 'Vikuraa\Modules\Login\LoginController:login');
 });
 
 // Register all the routes.
