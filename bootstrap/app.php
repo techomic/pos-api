@@ -11,6 +11,8 @@ use Slim\Routing\RouteCollectorProxy;
 use Vikuraa\Middlewares\JwtMiddleware;
 use Vikuraa\Middlewares\DbMiddleware;
 use Vikuraa\Middlewares\AppConfigMiddleware;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -46,6 +48,20 @@ $app = AppFactory::create();
 
 $logger = $container->get(LoggerInterface::class);
 $errorMiddleware = $app->addErrorMiddleware(boolval($debugMode), true, true, $logger);
+
+
+$app->add(function ($request, $handler) {
+    $response = $handler->handle($request);
+    return $response
+            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+});
+
+$app->options('/{routes:.*}', function (Request $request, Response $response) {
+    // CORS Pre-Flight OPTIONS Request Handler
+    return $response;
+});
 
 // Login routes
 $app->group('/user', function (RouteCollectorProxy $route) {
