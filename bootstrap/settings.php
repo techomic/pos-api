@@ -11,6 +11,7 @@ return function (ContainerBuilder $containerBuilder) {
                 'domain' => getenv('DOMAIN'),
                 'language' => getenv('APP_LANG'),
                 'charset' => getenv('CHARSET') ?? 'UTF-8',
+                'debug' => getenv('APP_DEBUG') == '' ? false : boolval(getenv('APP_DEBUG')),
             ],
             'security' => [
                 'enc_key' => getenv('ENC_KEY'),

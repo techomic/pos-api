@@ -13,6 +13,7 @@ use Vikuraa\Middlewares\DbMiddleware;
 use Vikuraa\Middlewares\AppConfigMiddleware;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Vikuraa\Handlers\HttpErrorHandler;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -40,15 +41,17 @@ $dependencies($containerBuilder);
 $container = $containerBuilder->build();
 
 
-$debugMode = getenv('APP_DEBUG') == null ? false : boolval(getenv('APP_DEBUG'));
+$debugMode = $container->get('settings')['app']['debug'];
 
-AppFactory::setContainer($container);
-
-$app = AppFactory::create();
+$app = AppFactory::createFromContainer($container);
 
 $logger = $container->get(LoggerInterface::class);
-$errorMiddleware = $app->addErrorMiddleware(boolval($debugMode), true, true, $logger);
 
+$unsafeExceptions = [];
+$errorHandler = new HttpErrorHandler($app->getCallableResolver(), $app->getResponseFactory(), $logger);
+$errorHandler->setUnsafeExceptions($unsafeExceptions);
+$errorMiddleware = $app->addErrorMiddleware(boolval($debugMode), true, true, $logger);
+$errorMiddleware->setDefaultErrorHandler($errorHandler);
 
 $app->add(function ($request, $handler) {
     $response = $handler->handle($request);
