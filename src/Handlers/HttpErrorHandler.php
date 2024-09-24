@@ -52,13 +52,15 @@ class HttpErrorHandler extends ErrorHandler
             }
         }
 
+        $exceptionClass = get_class($exception);
         if (
             !($exception instanceof HttpException)
             && ($exception instanceof Exception || $exception instanceof Throwable)
         ) {
-            $description = $exception->getMessage();
+            $description = $this->displayErrorDetails ? "[{$exceptionClass}] " . $exception->getMessage() : "{$exceptionClass} occurred while processing your request.";
 
             if ($exception instanceof NoDataException) {
+                $statusCode = 404;
                 $type = self::RESOURCE_NOT_FOUND;
                 $description = $exception->getMessage();
             }
@@ -76,7 +78,7 @@ class HttpErrorHandler extends ErrorHandler
         $response = $this->responseFactory->createResponse($statusCode);        
         $response->getBody()->write($payload);
         
-        return $response;
+        return $response->withHeader('Content-Type', 'application/json');
     }
 
     public function setUnsafeExceptions(array $exceptions): void

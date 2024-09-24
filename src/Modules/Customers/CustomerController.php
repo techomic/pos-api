@@ -6,6 +6,7 @@ use Vikuraa\Core\Controller;
 use Slim\Http\Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use OpenApi\Attributes as OA;
+use Slim\Exception\HttpBadRequestException;
 use Vikuraa\Helpers\Functions;
 
 class CustomerController extends Controller
@@ -13,28 +14,18 @@ class CustomerController extends Controller
     public function byId(Request $request, Response $response, array $args)
     {
         $customerId = $args['customerId'];
-        if ($customerId == null || !is_int($customerId)) {
-            return $response->withJson([
-                'status' => 'error',
-                'message' => 'Customer ID is required and should be integer'
-            ], 400);
+        if ($customerId == null || !is_int(intval($customerId))) {
+            throw new HttpBadRequestException($request, 'Customer ID is required and should be integer');
         }
 
-        try {
-            $model = new CustomerModel($this->container);
+        $model = new CustomerModel($this->container);
 
-            $customer = $model->byId($customerId);
+        $customer = $model->byId($customerId);
 
-            return $response->withJson([
-                'status' => 'success',
-                'data' => $customer->toArray(),
-            ]);
-        } catch (\Exception $e) {
-            $method = __METHOD__;
-            $exception = Functions::exceptionMessage($e, $this->logger, $method);
-            
-            return $response->withJson(['status' => 'error', 'message' => $exception['message']], $exception['code']);
-        }
+        return $response->withJson([
+            'status' => 'success',
+            'data' => $customer->toArray(),
+        ]);
     }
 
     public function search(Request $request, Response $response)
