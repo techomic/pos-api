@@ -26,7 +26,7 @@ class Customers extends Collection
     public function addAllFromDbArray(array $data) : void
     {
         foreach ($data as $row) {
-            $this->add(Customer::fromDbArray($row));
+            $this->addFromDbArray($row);
         }
     }
 }

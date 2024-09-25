@@ -75,7 +75,7 @@ $app->group('/user', function (RouteCollectorProxy $route) {
 $app->group('', function (RouteCollectorProxy $route) {
     include __DIR__ . '/routes.php';
 })
-->add(new JwtMiddleware($container))
 ->add(new AppConfigMiddleware($container))
 ->add(new DbMiddleware($container))
+->add(new JwtMiddleware($container))
 ;

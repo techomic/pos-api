@@ -30,7 +30,7 @@ class CustomerController extends Controller
 
     public function search(Request $request, Response $response)
     {
-        $body= $request->getParsedBody();
+        $body = $request->getParsedBody();
 
         $query = $body['query'] ?? null;
         $limit = $body['limit'] ?? 0;
@@ -39,26 +39,16 @@ class CustomerController extends Controller
         $order = $body['order'] ?? 'asc';
 
         if ($query == null) {
-            return $response->withJson([
-                'status' => 'error',
-                'message' => 'Query is required'
-            ], 400);
+            throw new HttpBadRequestException($request, 'Query is required');
         }
 
-        try {
-            $model = new CustomerModel($this->container);
+        $model = new CustomerModel($this->container);
 
-            $data = $model->search($query, $limit, $offset, $sort, $order);
+        $data = $model->search($query, $limit, $offset, $sort, $order);
 
-            return $response->withJson([
-                'status' => 'success',
-                'data' => $data->toArrayDeep()
-            ]);
-        } catch (\Exception $e) {
-            $method = __METHOD__;
-            $exception = Functions::exceptionMessage($e, $this->logger, $method);
-            
-            return $response->withJson(['status' => 'error', 'message' => $exception['message']], $exception['code']);
-        }
+        return $response->withJson([
+            'status' => 'success',
+            'data' => $data->toArrayDeep()
+        ]);
     }
 }

@@ -2,9 +2,6 @@
 
 namespace Vikuraa\Middlewares;
 
-use RuntimeException;
-use Slim\Routing\RouteContext;
-use Slim\Exception\HttpNotFoundException;
 use Slim\Http\ServerRequest as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Vikuraa\Helpers\Jwt;
@@ -20,19 +17,13 @@ class JwtMiddleware
     {
         $this->jwtHelper = $container->get(Jwt::class);
     }
-    
+
     public function __invoke(Request $request, RequestHandler $handler)
     {
-        $route = RouteContext::fromRequest($request)->getRoute();
-
-        if (empty($route)) {
-            throw new HttpNotFoundException($request);
-        }
-
         $token = $this->jwtHelper->getToken($request);
 
         if (empty($token)) {
-            throw new AuthException();
+            throw new AuthException('Token is required');
         }
 
         // check if the token has passed 10 minutes and send a refresh token
@@ -41,38 +32,31 @@ class JwtMiddleware
         $elapsed = (int)(($now - $created) / 60);
         // var_dump($elapsed);
         if ($elapsed >= 10 && $elapsed < 15) {
-            $response = $handler->handle($request);
-            $data = json_decode($response->getBody()->getContents(), true);
-
+            
             // create the refresh token
             $userData = $this->jwtHelper->getUserData($request);
             $username = $userData->payload->username;
-
+            
             $tokenPayload = [
                 'username' => $username,
                 'timestamp' => time(),
             ];
-
+            
+            $response = $handler->handle($request);
+            $data = json_decode($response->getBody()->getContents(), true);
             $data['refreshToken'] = $this->jwtHelper->create($tokenPayload);
             
             $streamFactory = new StreamFactory();
-            
+
             return $response
-                        ->withBody($streamFactory->createStream(json_encode($data)))
-                        ->withHeader('Content-Type', 'application/json');
+                ->withBody($streamFactory->createStream(json_encode($data)))
+                ->withHeader('Content-Type', 'application/json');
         }
 
-        try {
-            $this->jwtHelper->decode($token, 15 * 60); // 15 minutes
-        } catch (RuntimeException $e) {
 
-            $response = $handler->handle($request);
-
-            return $response->withJson([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 401);
-        }
+        $tokenData = $this->jwtHelper->decode($token, 15 * 60); // 15 minutes
+        
+        $request = $request->withAttribute('tokenData', $tokenData);
 
         return $handler->handle($request);
     }
