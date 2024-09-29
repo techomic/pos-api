@@ -58,4 +58,27 @@ class ItemModel extends Model
 
 		return $this->db->count($sql, $args);
 	}
+
+    // public function search(
+    //     string $search,
+    //     array $filters,
+    //     int $limit = 20,
+    //     int $page = 1,
+    //     ?string $sort = 'items.name',
+    //     ?string $order = 'asc',
+    //     ?bool $countOnly = false
+    // ) : Items {
+    //     $sql = "";
+    // }
+
+    public function save(Item $item)
+    {
+        $sql = "
+            insert into items (
+            
+            ) values (
+             
+            )
+        ";
+    }
 }
