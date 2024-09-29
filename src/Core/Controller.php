@@ -4,7 +4,6 @@ namespace Vikuraa\Core;
 
 use DI\Container;
 use Psr\Log\LoggerInterface;
-use OpenApi\Attributes as OA;
 use Vikuraa\Helpers\Cache;
 use Vikuraa\Modules\AppConfig\AppConfigs;
 
