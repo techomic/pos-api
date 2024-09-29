@@ -69,7 +69,7 @@ class AttributeDefinitionModel extends Model
         $sql = "
             select parent_definition.definition_name as definition_group, definition.*
             from attribute_definitions definition
-            left join attribute_definitions parent_definition parent_definition.definition_id = definition.definition_fk
+            left join attribute_definitions parent_definition parent_definition.definition_id = definition.fk
             where definition.definition_id = :definition_id
         ";
 		$args = ['definition_id' => $definitionId];
@@ -99,8 +99,8 @@ class AttributeDefinitionModel extends Model
         $sql = "
             select parent_definition.definition_name as definition_group, definition.*
             from attribute_definitions definition
-            left join attribute_definitions parent_definition on parent_definition.definition_id = definition.definition_fk
-            where
+            left join attribute_definitions parent_definition on parent_definition.definition_id = definition.fk
+            wheredefinition_fk
                 (
                     definition.definition_name like concat('%', cast(:query as text), '%')
                     or definition.definition_type like concat('%', cast(:query as text), '%')
@@ -134,19 +134,101 @@ class AttributeDefinitionModel extends Model
 	 * @param int $itemId Item to retrieve attributes for.
 	 * @return array Attributes for the item.
 	 */
-	public function byItemId(int $itemId): array
+	public function byItemId(int $itemId): AttributeDefinitions
 	{
-        // TODO: understand this method and fix it
-		$builder = $this->db->table('attribute_definitions');
-		$builder->join('attribute_links', 'attribute_links.definition_id = attribute_definitions.definition_id');
-		$builder->where('item_id', $item_id);
-		$builder->where('sale_id', null);
-		$builder->where('receiving_id', null);
-		$builder->where('deleted', 0);
-		$builder->orderBy('definition_name', 'ASC');
+		$sql = "select * from attribute_definitions left join attribute_links on attribute_definitions.id = attribute_links.definition_id where attribute_links.item_id = :item_id and attribute_definitions.deleted = false order by definition_name";
 
-		$results = $builder->get()->getResultArray();
+		$args = ['item_id' => $itemId];
 
-		return $this->to_array($results, 'definition_id');
+		$data = $this->db->query($sql, $args);
+
+		if (!(is_array($data) && count($data) > 0)) {
+			throw new NoDataException('No attribute definitions found for the item');
+		}
+
+		$attributeDefinitions = new AttributeDefinitions();
+
+		$attributeDefinitions->addAllFromDbArray($data);
+
+		return $attributeDefinitions;
+	}
+
+	public function byIds(array $ids) : AttributeDefinitions
+	{
+		$sql = "select * from attribute_definitions where id in ((";
+
+		$i = 1;
+		foreach ($ids as $id) {
+			$sql .= "{$id}";
+			if ($i < count($ids)) {
+				$sql .= ",";
+			}
+
+		}
+		$sql .= ") or fk in (";
+		$i = 1;
+		foreach ($ids as $id) {
+			$sql .= "{$id}";
+			if ($i < count($ids)) {
+				$sql .= ",";
+			}
+		}
+		$sql .= ")) and deleted = false";
+
+		$data = $this->db->query($sql);
+
+		if (!(is_array($data) && count($data) > 0)) {
+			throw new NoDataException('No attribute definitions found for the item');
+		}
+
+		$definitions = new AttributeDefinitions();
+
+		$definitions->addAllFromDbArray($data);
+
+		return $definitions;
+	}
+
+	public function total()
+	{
+		$sql = "select * from attribute_definitions where deleted = false";
+
+		$count = $this->db->count($sql);
+
+		return $count;
+	}
+
+	public function byType(string $type): AttributeDefinitions
+	{
+		$sql = "select * from attribute_definitions where type = :definition_type and deleted = false";
+
+		$args = ['definition_type' => $type];
+		$data = $this->db->query($sql, $args);
+
+		if (!(is_array($data) && count($data) > 0)) {
+			throw new NoDataException('No attribute definitions found');
+		}
+
+		$definitions = new AttributeDefinitions();
+		$definitions->addAllFromDbArray($data);
+
+		return $definitions;
+	}
+
+	public function byFlags(int $flag): AttributeDefinitions
+	{
+		$sql = "select * from attribute_definitions where flags = :flags and deleted = false";
+
+		$args = ['flags' => $flag];
+
+		$data = $this->db->query($sql, $args);
+
+		if (!(is_array($data) && count($data) > 0)) {
+			throw new NoDataException('No attribute definitions found');
+		}
+
+		$definitions = new AttributeDefinitions();
+		$definitions->addAllFromDbArray($data);
+
+		return $definitions;		
 	}
 }

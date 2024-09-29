@@ -1,5 +1,6 @@
 <?php
 
+use Slim\Exception\HttpNotFoundException;
 use Vikuraa\Modules\Test\TestController;
 
 /**
@@ -16,6 +17,7 @@ $route->get('/', function($request, $response) {
 
 include __DIR__ . '/../src/Modules/AppConfig/routes.php';
 include __DIR__ . '/../src/Modules/Customers/routes.php';
+include __DIR__ . '/../src/Modules/Suppliers/routes.php';
 /**
  * Testing
  */
@@ -27,3 +29,7 @@ $route->get('/test-uri', TestController::class . ':testUri');
 $route->get('/generate-random-bytes/{length}', TestController::class . ':generateRandomBytes');
 $route->get('/encrypt/{string}', TestController::class . ':testEncryption');
 $route->get('/test-hashing', TestController::class . ':testHashing');
+
+$route->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($request, $response) {
+    throw new HttpNotFoundException($request);
+});

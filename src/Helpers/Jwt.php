@@ -39,7 +39,7 @@ class Jwt
 
     public function decode($token, $ttl = null)
     {
-        return $ttl == null ? $this->branca->decode($token) : $this->branca->decode($token, $ttl);
+        return $ttl == null ? json_decode($this->branca->decode($token)) : json_decode($this->branca->decode($token, $ttl));
     }
 
     public function getToken(Request $request)

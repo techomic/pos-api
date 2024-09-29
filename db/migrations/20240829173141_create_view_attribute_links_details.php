@@ -8,7 +8,7 @@ final class CreateViewAttributeLinksDetails extends AbstractMigration
 {
     public function up(): void
     {
-        $view = $this->execute("create view attribute_links_details as
+        $this->execute("create view attribute_links_details as
             select
                 al.attribute_id,
                 av.value as attribute_value_value,
