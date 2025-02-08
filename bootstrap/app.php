@@ -47,10 +47,8 @@ $app = AppFactory::createFromContainer($container);
 
 $logger = $container->get(LoggerInterface::class);
 
-$unsafeExceptions = [];
 $errorHandler = new HttpErrorHandler($app->getCallableResolver(), $app->getResponseFactory(), $logger);
-$errorHandler->setUnsafeExceptions($unsafeExceptions);
-$errorMiddleware = $app->addErrorMiddleware(boolval($debugMode), true, true, $logger);
+$errorMiddleware = $app->addErrorMiddleware($debugMode, true, true);
 $errorMiddleware->setDefaultErrorHandler($errorHandler);
 
 $app->add(function ($request, $handler) {

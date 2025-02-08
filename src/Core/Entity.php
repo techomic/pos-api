@@ -34,7 +34,7 @@ abstract class Entity
     // the array indices should match the property names
     public static function fromArray(array $data): static
     {
-        $entity = new self();
+        $entity = new static();
         foreach ($data as $key => $value) {
             $entity->$key = $value;
         }

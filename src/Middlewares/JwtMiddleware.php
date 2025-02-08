@@ -30,7 +30,6 @@ class JwtMiddleware
         $created = $this->jwtHelper->timestamp($token);
         $now = time();
         $elapsed = (int)(($now - $created) / 60);
-        // var_dump($elapsed);
         if ($elapsed >= 10 && $elapsed < 15) {
             
             // create the refresh token

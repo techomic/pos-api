@@ -13,7 +13,7 @@ final class CreateTablePeople extends AbstractMigration
         $table->addColumn('person_id', 'integer', ['identity' => true])
             ->addColumn('first_name', 'string', ['limit' => 255, 'null' => false])
             ->addColumn('last_name', 'string', ['limit' => 255, 'null' => false])
-            ->addColumn('gender', 'integer', ['null' => true, 'limit' => 1])
+            ->addColumn('gender', 'char', ['null' => true, 'limit' => 1])
             ->addColumn('phone_number', 'string', ['limit' => 20, 'null' => false])
             ->addColumn('email', 'string', ['limit' => 255, 'null' => false])
             ->addColumn('address_1', 'string', ['limit' => 255, 'null' => false])

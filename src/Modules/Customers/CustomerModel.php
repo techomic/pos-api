@@ -12,6 +12,7 @@ class CustomerModel extends Model
     {
         $sql = "
             insert into customers (
+                person_id,
                 company_name,
                 account_number,
                 taxable,
@@ -24,6 +25,7 @@ class CustomerModel extends Model
                 employee_id,
                 consent
             ) values (
+                :person_id,
                 :company_name,
                 :account_number,
                 :taxable,
@@ -39,6 +41,7 @@ class CustomerModel extends Model
         ";
 
         $args = [
+            'person_id' => $customer->personId,
             'company_name' => $customer->companyName,
             'account_number' => $customer->accountNumber,
             'taxable' => $customer->taxable,
@@ -52,7 +55,7 @@ class CustomerModel extends Model
             'consent' => $customer->consent,
         ];
 
-        if ((new PersonModel($this->container))->save($customer)) {
+        if ($args['person_id'] = (new PersonModel($this->container))->save($customer)) {
             return $this->db->execute($sql, $args, true);
         }
 

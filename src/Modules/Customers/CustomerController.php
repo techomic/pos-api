@@ -11,6 +11,18 @@ use Vikuraa\Helpers\Functions;
 
 class CustomerController extends Controller
 {
+    public function index(Request $request, Response $response)
+    {
+        $model = new CustomerModel($this->container);
+
+        $data = $model->all();
+
+        return $response->withJson([
+            'status' => 'success',
+            'data' => $data
+        ]);
+    }
+
     public function byId(Request $request, Response $response, array $args)
     {
         $customerId = $args['customerId'];
@@ -49,6 +61,32 @@ class CustomerController extends Controller
         return $response->withJson([
             'status' => 'success',
             'data' => $data->toArrayDeep()
+        ]);
+    }
+
+    public function save(Request $request, Response $response)
+    {
+        $body = $request->getParsedBody();
+
+        if (empty($body['first_name']) || empty($body['last_name']) || empty($body['consent'])) {
+            throw new HttpBadRequestException($request, 'First name, last name and consent are required');
+        }
+
+        $body['person_id'] = 0;
+        $customer = Customer::fromDbArray($body);
+
+        $model = new CustomerModel($this->container);
+
+        if ($model->save($customer)) {
+            return $response->withJson([
+                'status' => 'success',
+                'message' => 'Customer saved successfully'
+            ]);
+        }
+
+        return $response->withJson([
+            'status' => 'error',
+            'message' => 'Could not save customer'
         ]);
     }
 }

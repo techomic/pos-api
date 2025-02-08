@@ -12,19 +12,19 @@ use Slim\Exception\HttpUnauthorizedException;
 use Slim\Handlers\ErrorHandler;
 use Exception;
 use Throwable;
+use Vikuraa\Exceptions\AuthException;
 use Vikuraa\Exceptions\NoDataException;
 
 class HttpErrorHandler extends ErrorHandler
 {
     public const BAD_REQUEST = 'BAD_REQUEST';
     public const INSUFFICIENT_PRIVILEGES = 'INSUFFICIENT_PRIVILEGES';
+    public const FORBIDDEN = 'FORBIDDEN';
     public const NOT_ALLOWED = 'NOT_ALLOWED';
     public const NOT_IMPLEMENTED = 'NOT_IMPLEMENTED';
     public const RESOURCE_NOT_FOUND = 'RESOURCE_NOT_FOUND';
     public const SERVER_ERROR = 'SERVER_ERROR';
     public const UNAUTHENTICATED = 'UNAUTHENTICATED';
-    public const FORBIDDEN = 'FORBIDDEN';
-    protected array $unsafeExceptions = [];
     
     protected function respond(): ResponseInterface
     {
@@ -53,16 +53,17 @@ class HttpErrorHandler extends ErrorHandler
         }
 
         $exceptionClass = get_class($exception);
+        
         if (
             !($exception instanceof HttpException)
             && ($exception instanceof Exception || $exception instanceof Throwable)
         ) {
-            $description = $this->displayErrorDetails ? "[{$exceptionClass}] " . $exception->getMessage() : "{$exceptionClass} occurred while processing your request.";
+            $description = $this->displayErrorDetails ?  "[{$exceptionClass}]: " . $exception->getMessage() : $exceptionClass . ' occurred while processing your request';
 
-            if ($exception instanceof NoDataException) {
-                $statusCode = 404;
-                $type = self::RESOURCE_NOT_FOUND;
+            if ($exception instanceof AuthException) {
                 $description = $exception->getMessage();
+                $statusCode = $exception->getCode();
+                $type = self::UNAUTHENTICATED;
             }
         }
 
@@ -79,10 +80,5 @@ class HttpErrorHandler extends ErrorHandler
         $response->getBody()->write($payload);
         
         return $response->withHeader('Content-Type', 'application/json');
-    }
-
-    public function setUnsafeExceptions(array $exceptions): void
-    {
-        $this->unsafeExceptions = $exceptions;
     }
 }

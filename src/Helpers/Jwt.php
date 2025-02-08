@@ -4,6 +4,9 @@ namespace Vikuraa\Helpers;
 
 use Branca\Branca;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use RuntimeException;
+use Vikuraa\Exceptions\AuthException;
+use Psr\Log\LoggerInterface;
 
 class Jwt
 {
@@ -39,7 +42,16 @@ class Jwt
 
     public function decode($token, $ttl = null)
     {
-        return $ttl == null ? json_decode($this->branca->decode($token)) : json_decode($this->branca->decode($token, $ttl));
+        try {
+            $decoded = $ttl == null ? $this->branca->decode($token) : $this->branca->decode($token, $ttl);
+
+            if (is_string($decoded)) {
+                return json_decode($decoded);
+            }
+            return $decoded;
+        } catch (RuntimeException $e) {
+            throw new AuthException($e->getMessage());
+        }
     }
 
     public function getToken(Request $request)
